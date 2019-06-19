@@ -13,7 +13,7 @@
 
 
 # Running the Code
-1. `cd` into `src/lib` and open CMD.
+1. Locate `src/lib` in File Explorer and open CMD.
 2. Start the person ID module: `python PersonIdentification.py`
 3. Edit line 56 in `core.py` to include the filename of the video you wish to test.
 4. Start the core in CMD: `python core.py`
