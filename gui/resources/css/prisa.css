@@ -1,0 +1,9 @@
+.container {
+    border: .25em solid black;
+    position: center;
+    text-align: center;
+}
+
+.justify-content-center {
+    text-align: left;
+}
