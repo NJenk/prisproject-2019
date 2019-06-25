@@ -2,8 +2,17 @@
     border: .25em solid black;
     position: center;
     text-align: center;
+    border-top: none;
+}
+
+.container ul {
+    text-align: left;
 }
 
 .justify-content-center {
     text-align: left;
+}
+
+.navbar-dark {
+    background-color: blueviolet;
 }
