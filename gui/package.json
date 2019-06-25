@@ -8,7 +8,9 @@
     "express": "^4.17.1",
     "jquery": "^3.4.1",
     "passport": "^0.4.0",
+    "path": "^0.12.7",
     "popper.js": "^1.15.0",
+    "pug": "^2.0.4",
     "request": "^2.88.0"
   },
   "devDependencies": {},
