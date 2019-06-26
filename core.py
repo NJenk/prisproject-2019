@@ -9,10 +9,10 @@ import json, traceback
 class PersonReIdentificationSystemCore():
 	
 	def __init__(self, reader):
-		self.reader = reader
-		self.person_detection = PersonDetectionModule("box")
-		self.feature_extraction = FeatureExtractionModule()
-		self.person_identification_url = 'http://127.0.0.1:8080/'
+                self.reader = reader
+                self.person_detection = PersonDetectionModule("box")
+                self.feature_extraction = FeatureExtractionModule()
+                self.person_identification_url = 'http://127.0.0.1:8080/'
 	
 	def process_video(self):
 		print("Processing video...")
@@ -47,14 +47,14 @@ class PersonReIdentificationSystemCore():
 							print(resp.text)
 					#except Exception as e:
 					#	print("Error: ", e)
+		print("Video processing successful")
 		self.reader.release()
 		cv2.destroyAllWindows()
 
 #==================driver for the PRIS core================================
 if(__name__=="__main__"):
 
-	filename = "data/sen_1.avi"
-	
+	filename = input("Please enter file path: ")
 	reader = cv2.VideoCapture(filename)
 	core = PersonReIdentificationSystemCore(reader)
 	core.process_video()
