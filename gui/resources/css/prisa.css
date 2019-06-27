@@ -1,18 +1,41 @@
+body {
+    background-color:teal;
+}
+
 .container {
-    border: .25em solid black;
+    border: .2em solid black;
     position: center;
     text-align: center;
     border-top: none;
+    border-bottom: none;
+    padding: 10px;
+    height: 100%;
+    background-color: white;
+}
+
+.container p {
+    padding: 10px;
 }
 
 .container ul {
     text-align: left;
 }
 
-.justify-content-center {
+.p-2 {
     text-align: left;
 }
 
 .navbar-dark {
-    background-color: blueviolet;
+    background-color: black;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    font-size: .75em;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: .25em;
 }
