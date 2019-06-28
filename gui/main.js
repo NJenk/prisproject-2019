@@ -41,6 +41,9 @@ app.get('/FAQ', (req, res) => {
 app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
+app.get('/Popup', (req, res) => {
+	res.render('popup', {root: __dirname + '/views/'});
+})
 
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
