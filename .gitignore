@@ -1,1 +1,10 @@
 node_modules
+
+*.caffemodel
+*.exe
+cudnn64_7.dll
+opencv_world401d.dll
+Spinnakerd_v140.dll
+cublas64_100.dll
+opencv_world401.dll
+curand64_100.dll
