@@ -29,6 +29,12 @@ body {
     background-color: black;
 }
 
+form {
+    position: relative;
+    padding: .5em;
+}
+
+
 footer {
     background-color: black;
     color: white;
