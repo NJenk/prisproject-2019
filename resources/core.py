@@ -113,7 +113,7 @@ class PersonReIdentificationSystemCore():
 
 						#ADDED BY NICK: If it's new, spit out the image
 						if label[0]==1:
-                                                        cv2.imwrite("TEMP/img/"+str(label[1]).replace('"',"")+".jpg",person[0])
+                                                        cv2.imwrite("images/profile_pics/"+str(label[1]).replace('"',"")+".jpg",person[0])
 						
 						#Display label to console
 						self.display(5, label=[label[0], str(count), label[1], label[2]])
