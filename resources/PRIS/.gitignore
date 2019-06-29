@@ -1,0 +1,10 @@
+__pycache__
+3rdparty
+bin
+data
+database
+examples
+include
+lib
+models
+TEMP

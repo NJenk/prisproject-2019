@@ -1,8 +1,0 @@
-*.caffemodel filter=lfs diff=lfs merge=lfs -text
-*.exe filter=lfs diff=lfs merge=lfs -text
-cudnn64_7.dll filter=lfs diff=lfs merge=lfs -text
-opencv_world401d.dll filter=lfs diff=lfs merge=lfs -text
-Spinnakerd_v140.dll filter=lfs diff=lfs merge=lfs -text
-cublas64_100.dll filter=lfs diff=lfs merge=lfs -text
-opencv_world401.dll filter=lfs diff=lfs merge=lfs -text
-curand64_100.dll filter=lfs diff=lfs merge=lfs -text
