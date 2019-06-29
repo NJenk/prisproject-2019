@@ -28,16 +28,11 @@ body {
 .navbar-dark {
     background-color: black;
 }
-
-<<<<<<< HEAD
 form {
     position: relative;
     padding: .5em;
 }
 
-
-=======
->>>>>>> backend
 footer {
     background-color: black;
     color: white;
