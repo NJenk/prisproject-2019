@@ -1,4 +1,4 @@
-const pathToPRIS = process.cwd()+'\\resources\\';
+const pathToPRIS = process.cwd()+'\\resources\\PRIS\\';
 
 var http = require('http');
 var formidable = require('formidable');
