@@ -19,6 +19,7 @@ class PersonDetectionModule():
 		
 	def process_frame_cpu(self, frame):
 		#resize the frame to a 300x300 image for detection, get image metrics, and our Binary Large Object
+		#Output format: [(detection frame, bounding box),...]
 		height, width, channels = frame.shape
 		size = (300, 300)
 		blob = cv2.dnn.blobFromImage(cv2.resize(frame, size), 0.007843, size, 127.5)
@@ -43,7 +44,7 @@ class PersonDetectionModule():
 				X2 += 15
 				Y2 += 15
 				if(self.output_method == "box"):
-					frames.append(self.box_frame(frame[:], X1, Y1, X2, Y2))
+					frames.append((self.box_frame(frame[:], X1, Y1, X2, Y2), [(X1, Y1), (X2, Y2)]))
 				else:
 					frames.append(self.contor_frame(frame[:], X1, Y1, X2, Y2))
 			
@@ -56,6 +57,7 @@ class PersonDetectionModule():
 		return frame
 		
 	def contor_frame(self, frame, X1, Y1, X2, Y2):
+		#TODO: Return the contor of a person
 		return frame
 
 #=========Test driver=============

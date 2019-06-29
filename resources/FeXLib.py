@@ -1,18 +1,103 @@
-from imutils import face_utils
 import numpy as np
-import argparse
 import imutils
-import dlib
+import face_recognition
 import cv2
-import os
 from operator import add
-from scipy.stats import itemfreq
-import argparse
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import subprocess
 import json
-import math
+
+def get_skeleton_keypoints(frame):
+	#STEP-01: Use OpenPose to get the skeleton
+	temp_dir = 'TEMP'
+	img_dir = temp_dir+'/img'
+	exe_loc = 'bin/OpenPoseDemo.exe'
+	keypoints_dir = temp_dir+'/JSON'
+	
+	cv2.imwrite(img_dir+'/frame.jpg', frame)
+	#input("wrote image")
+	
+	cmd = [exe_loc, '--image_dir', img_dir, "--write_json", keypoints_dir, "--display", "0", "--render_pose", "0", "--net_resolution", "320x176"]
+	results = subprocess.run(cmd, stdout=subprocess.PIPE)
+	results.stdout.decode('utf-8')
+	#input("wrote keypoints")
+	
+	with open(keypoints_dir+'/frame_keypoints.json', 'r') as f:
+		obj = json.load(f)
+
+	data = obj["people"]
+	ourDict = data[0]
+	lst = ourDict["pose_keypoints_2d"]
+	lst_2 = []
+
+	for x in ourDict["pose_keypoints_2d"]:
+		lst_2.append(float(x))
+
+	arr_x = []
+	arr_y = []
+
+	i = 0
+
+	while i < len(lst_2):
+		arr_x.append(lst_2[i])
+		i += 1
+		arr_y.append(lst_2[i])
+		i+=2
+	
+	#Skeleton derived from openpose
+	skeleton_points = [
+				#Skeleton right
+				np.array((arr_x[15], arr_y[15])), #right eye
+				np.array((arr_x[17], arr_y[17])), #right ear
+				np.array((arr_x[2], arr_y[2])), #right shoulder
+				np.array((arr_x[3], arr_y[3])), #right elbow
+				np.array((arr_x[4], arr_y[4])), #right wrist
+				np.array((arr_x[9], arr_y[9])), #right hip
+				np.array((arr_x[10], arr_y[10])), #right knee
+				np.array((arr_x[11], arr_y[11])), #right ankle
+				np.array((arr_x[24], arr_y[24])), #right heel
+				np.array((arr_x[22], arr_y[22])), #right foot
+				np.array((arr_x[23], arr_y[23])), #right toes
+
+				#Skeleton middle
+				np.array((arr_x[0], arr_y[0])), #nose
+				np.array((arr_x[1], arr_y[1])), #neck
+				np.array((arr_x[8], arr_y[8])), #hip
+
+				#Skeleton left
+				np.array((arr_x[16], arr_y[16])), #left eye
+				np.array((arr_x[18], arr_y[18])), #left ear
+				np.array((arr_x[5], arr_y[5])), #left shoulder
+				np.array((arr_x[6], arr_y[6])), #left elbow
+				np.array((arr_x[7], arr_y[7])), #left wrist
+				np.array((arr_x[12], arr_y[12])), #left hip
+				np.array((arr_x[13], arr_y[13])), #left knee
+				np.array((arr_x[14], arr_y[14])), #left ankle
+				np.array((arr_x[21], arr_y[21])), #right heel
+				np.array((arr_x[19], arr_y[19])), #right foot
+				np.array((arr_x[20], arr_y[20])) #right toes
+			  ]
+	return skeleton_points
+
+def get_unit_vector(nosePoint, neckPoint, rEar, lEar):
+	#TODO: Find a better unit vector. If the nose is not detected then the entire sckeleton, width and height measurments will fail.
+	#would be better to do head tracking then use the heads position to get the unit vector
+	#for now I substitute the ears for the nose
+	if(sum(nosePoint) == 0):
+		if(sum(rEar) != 0):
+			unit_vector = np.linalg.norm(rEar - neckPoint)
+		elif(sum(lEar) != 0):
+			unit_vector = np.linalg.norm(lEar - neckPoint)
+		else:
+			#Use the nose point and the neck point to derive the unit vector
+			unit_vector = np.linalg.norm(nosePoint - neckPoint)
+	else:
+		#Use the nose point and the neck point to derive the unit vector
+		unit_vector = np.linalg.norm(nosePoint - neckPoint)
+	return unit_vector
+
+def get_segment(p1, p2):
+	return np.linalg.norm(p1 - p2)
 
 def find_histogram(clt):
 	"""
@@ -153,250 +238,141 @@ def HairFeatureExtractor(frame):
 
 def FacialFeatureExtractor(frame):
 	feature_vector = []
-	tol = 200
+	faces = {} #format: {"ecodings": [...], "labels": [....]}
+
+	#load in the known faces
+	infile = open("models/faces.json", 'r')
+	faces = json.load(infile)
+	faces["encodings"] = [np.asarray(x, dtype=np.float64) for x in faces["encodings"]]
+	infile.close()
+
+	#resize it into useable form and convert it
+	rgb_frame = frame[:, :, ::-1]
 	
-	# initialize dlib's face detector (HOG-based) and then create
-	# the facial landmark predictor
-	detector = dlib.get_frontal_face_detector()
-	predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
-
-	# Resize the image, and convert it to grayscale
-	frame = imutils.resize(frame, width=500)
-	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-	# This array stores all the coordinates that are come up with from
-	# the facial predictor algorithm.
-	coordinates = []
-
-	# detect faces in the grayscale image
-	rects = detector(gray, 1)
-
-	# loop over the face detections
-	for (i, rect) in enumerate(rects):
-		# determine the facial landmarks for the face region, then
-		# convert the landmark (x, y)-coordinates to a NumPy array
-		# and then add this array to the coordinates array to be stored
-		# for calculating the distances and ratios later.
-		shape = predictor(gray, rect)
-		shape = face_utils.shape_to_np(shape)
-		coordinates.append(shape)
-		break
-
-	# The arrays that will store the distances from point to point, and
-	# ratios of each distance to the next distance.
-	distances = []
-	ratios = []
-	if len(coordinates) > 0:
-		# Calculates distances and appends them to the distances array in order
-		#load in the known faces
-		infile = open("models/faces.json", 'r')
-		faces = json.load(infile)
-		infile.close()
+	#find faces in the image
+	loc = face_recognition.face_locations(rgb_frame)#,  )
+	if(len(loc) != 0):
+		#generate facial encodings
+		face_encodings = face_recognition.face_encodings(rgb_frame, loc)#, num_jitters=5)
+		#match the face or add to known faces
+		match = face_recognition.compare_faces(faces["encodings"], face_encodings[0], tolerance=0.6)
 		
-		#put the face in a usable format
-		face = [(int(x[0]), int(x[1])) for x in coordinates[0]]
-
-		for knownFace in faces:
-			kFace = json.loads(knownFace)
+		if(True not in match or len(match) == 0):
+			#if faces is empty or this is an unknown face then generate a new label
+			faces["encodings"].append(face_encodings[0])
+			feature_vector = [abs(int(sum(face_encodings[0][:len(face_encodings[0])//2])*1000)), abs(int(sum(face_encodings[0][len(face_encodings[0])//2:])*1000))]
+			i=0
+			while(feature_vector in faces["labels"]):
+				feature_vector = [abs(int(sum(face_encodings[0][:len(face_encodings[0])//2])*1000))+i, abs(int(sum(face_encodings[0][len(face_encodings[0])//2:])*1000))+i]
+				i+=1
+			faces["labels"].append(feature_vector)
 			
-			f = np.array(face)
-			kf = np.array(kFace)
-			norm = np.linalg.norm(f - kf)
-			if(np.isclose(norm, 0, atol=tol)):
-				feature_vector = faces[knownFace]
-
-		if(len(feature_vector)==0): #only happens when there are no matches or there were no known faces
-			#add a new face to the dict
-			knownFace = json.dumps(face)
-			face = np.array(face)
-			faces[knownFace] = [str(int(np.average(face[:, 1:]))), str(int(np.average(face[:, :1])))]
-			feature_vector = faces[knownFace]
-
-		#save the dictionary to file so we don't lose facial information
-		outfile = open("models/faces.json", 'w')
-		json.dump(faces, outfile)
-		outfile.close()
+			#save new encodings to disc
+			outfile = open("models/faces.json", 'w')
+			faces["encodings"] = [x.tolist() for x in faces["encodings"]]
+			json.dump(faces, outfile)
+			outfile.close()
+			faces["encodings"] = [np.asarray(x, dtype=np.float64) for x in faces["encodings"]]
+		else:
+			#we have seen this face before so pull the label
+			feature_vector = faces["labels"][match.index(True)]
 	else:
-		feature_vector = ["-1"]
+		feature_vector = [-1, -1]
 	return feature_vector
 
 
 def SkeletonFeatureExtractor(frame):
-	#print("starting skeleton")
-	temp_dir = 'TEMP'
-	img_dir = temp_dir+'/img'
-	exe_loc = 'bin/OpenPoseDemo.exe'
-	keypoints_dir = temp_dir+'/JSON'
+	mul_shift = 1000 #multiplicative shift to all values - makes getting the variance easier
+	#STEP-01: Get the skeleton keypoints
+	skeleton_points = get_skeleton_keypoints(frame)
+
+	# #Skeleton keypoints derived from openpose
+	# skeleton_points = [
+				# #Skeleton right
+				# 0, #right eye
+				# 1, #right ear
+				# 2, #right shoulder
+				# 3, #right elbow
+				# 4, #right wrist
+				# 5, #right hip
+				# 6, #right knee
+				# 7, #right ankle
+				# 8, #right heel
+				# 9, #right foot
+				# 10, #right toes
+
+				# #Skeleton middle
+				# 11, #nose
+				# 12, #neck
+				# 13, #hip
+
+				# #Skeleton left
+				# 14, #left eye
+				# 15, #left ear
+				# 16, #left shoulder
+				# 17, #left elbow
+				# 18, #left wrist
+				# 19, #left hip
+				# 20, #left knee
+				# 21, #left ankle
+				# 22, #right heel
+				# 23, #right foot
+				# 24 #right toes
+			  # ]
 	
-	cv2.imwrite(img_dir+'/frame.jpg', frame)
-	#input("wrote image")
 	
-	cmd = [exe_loc, '--image_dir', img_dir, "--write_json", keypoints_dir, "--display", "0", "--render_pose", "0"]
-	results = subprocess.run(cmd, stdout=subprocess.PIPE)
-	results.stdout.decode('utf-8')
-	#input("wrote keypoints")
+	#STEP-02: Get the unit vector for conversion
+	unit_vector = get_unit_vector(skeleton_points[11], skeleton_points[12], skeleton_points[1], skeleton_points[15])
 	
-	with open(keypoints_dir+'/frame_keypoints.json', 'r') as f:
-		obj = json.load(f)
-
-	data = obj["people"]
-	ourDict = data[0]
-	lst = ourDict["pose_keypoints_2d"]
-	lst_2 = []
-
-	for x in ourDict["pose_keypoints_2d"]:
-		lst_2.append(float(x))
-
-
-	arr_x = []
-	arr_y = []
-
-	i = 0
-
-	while i < len(lst_2):
-		arr_x.append(lst_2[i])
-		i += 1
-		arr_y.append(lst_2[i])
-		i+=2
-
-	#print(arr_x)
-	#print(arr_y)
-
-	nose = (arr_x[0], arr_y[0])
-	neck = (arr_x[1], arr_y[1])
-	#rightArm
-	rtShlder = (arr_x[2], arr_y[2])
-	rtEl = (arr_x[3], arr_y[3])
-	rtWrst = (arr_x[4], arr_y[4])
-	#leftArm
-	lftShlder = (arr_x[5], arr_y[5])
-	lftEl = (arr_x[6], arr_y[6])
-	lftWrist = (arr_x[7], arr_y[7])
-
-	midHip = (arr_x[8], arr_y[8])
-	#rightLeg
-	rtHip = (arr_x[9], arr_y[9])
-	rtKnee = (arr_x[10], arr_y[10])
-	rtAnkle = (arr_x[11], arr_y[11])
-	#leftLeg
-	lftHip = (arr_x[12], arr_y[12])
-	lftKnee = (arr_x[13], arr_y[13])
-	lftAnkle = (arr_x[14], arr_y[14])
-	#eyes
-	rtEye = (arr_x[15], arr_y[15])
-	lftEye = (arr_x[16], arr_y[16])
-	#ears
-	rtEar = (arr_x[17], arr_y[17])
-	lftEar = (arr_x[18], arr_y[18])
-	#leftfoot
-	lftBFoot = (arr_x[19], arr_y[19])
-	lftToes = (arr_x[20], arr_y[20])
-	lftHeel = (arr_x[21], arr_y[21])
-	#righ foot
-	rtBFoot = (arr_x[22], arr_y[22])
-	rtToes = (arr_x[23], arr_y[23])
-	rtHeel = (arr_x[24], arr_y[24])
-
-
-
-	def distance(a,b):
-		return math.sqrt(((a[0] - b[0]) ** 2) + ((a[1] - b[1]) ** 2))
-
-
-	def dist_ratio(bdy_prt1, bdy_prt2):
-		distance_xy = math.sqrt(((bdy_prt1[0] - bdy_prt2[0]) ** 2) + ((bdy_prt1[1] - bdy_prt2[1]) ** 2))
-		return round(distance_xy/neckSize,2)
-
-	def standardize(value):
-		if value < 0.1:
-			return value*100000
-
-		if value < 1:
-			return value*10000
-
-		if value <= 9.99 and value >= 1:
-			return value*1000
-
-		if value > 9.99 and value < 100:
-			return value*100
-
-		if value > 100 and value < 999:
-			return value*10
-
-		if value >= 1000 and value < 9999:
-			return value
-
-		if value >= 10000:
-			return value/10
-
-
-	neckSize = distance(nose,neck)
-
-	height = ((round(((distance(nose,neck) + distance(neck,midHip) + distance(lftHip,lftKnee) + distance(lftKnee,lftAnkle))/neckSize), 2)))
-
-	height_ratio = height + neckSize
-
-	shlderWidth_ratio = (round(((distance(rtShlder,neck) + distance(neck,lftShlder))/neckSize),2))
-
-	waistWidth_ratio = (round(((distance(rtHip,midHip) + distance(midHip,lftHip))/neckSize),2))
-
-	width_array = [waistWidth_ratio,shlderWidth_ratio, distance(lftHip,rtHip)*100]
-
-	height_left = ((round(((distance(nose,neck) + distance(neck,midHip) + distance(lftHip,lftKnee) + distance(lftKnee,lftAnkle))/neckSize), 2)))
-
-	height_right = ((round(((distance(nose,neck) + distance(neck,midHip) + distance(rtHip,rtKnee) + distance(rtKnee,rtAnkle))), 2)))
-
-	height_ratio_right = height_right + neckSize
-
-	height_ratio_left = height_left + neckSize
-
-	shlderWidth_ratio = (round(((distance(rtShlder,neck) + distance(neck,lftShlder))/neckSize),2))
-
-	waistWidth_ratio = (round(((distance(rtHip,midHip) + distance(midHip,lftHip))/neckSize),2))
-
-	width_id = [str(int(standardize(waistWidth_ratio))),str(int(standardize(shlderWidth_ratio)))]
-
-
-	raw_skeleton_ratios = [dist_ratio(lftEye, rtEye), dist_ratio(rtEar, lftEar), dist_ratio(lftShlder, neck),
-					   dist_ratio(rtShlder,neck), dist_ratio(lftShlder,lftEl), dist_ratio(rtShlder,rtEl),
-					   dist_ratio(lftEl,lftWrist),dist_ratio(rtEl,rtWrst),dist_ratio(neck,midHip),
-					   dist_ratio(lftHip,midHip),dist_ratio(rtHip,midHip),dist_ratio(lftHip,lftKnee),
-					   dist_ratio(rtHip,rtKnee),dist_ratio(lftKnee,lftAnkle),dist_ratio(rtKnee,rtAnkle),
-					   dist_ratio(lftAnkle,lftBFoot),dist_ratio(rtAnkle,rtBFoot),dist_ratio(lftAnkle,lftHeel),
-					   dist_ratio(rtAnkle,rtHeel), dist_ratio(lftToes,lftBFoot),dist_ratio(rtToes, rtBFoot)]
-
-	skeleton_ratios_upper = [int(standardize(dist_ratio(lftHip,rtHip*100)))]
-
-	skeleton_ratios_mid = [int(standardize(dist_ratio(lftHip,rtHip*100)))]
-
-	skeleton_ratios_lower = [int(standardize(dist_ratio(lftHip,rtHip*100)))]
-
-
-	i = 0
-	while i < 7:
-		skeleton_ratios_upper.append(int(standardize(raw_skeleton_ratios[i]*neckSize*10)))
-		i += 1
-
-	while i < 14:
-		skeleton_ratios_mid.append(int(standardize(raw_skeleton_ratios[i]*neckSize*100)))
-		i += 1
-
-
-	while i < 21:
-		skeleton_ratios_lower.append(int(standardize(raw_skeleton_ratios[i]/neckSize*100)))
-		i += 1
-
-
-	upper_skel = str(int(standardize(sum(skeleton_ratios_upper))))
-	mid_skel = str(int(standardize(sum(skeleton_ratios_mid))))
-	lower_skel = str(int(standardize(sum(skeleton_ratios_lower))))
-
-	skelly_id = [upper_skel,mid_skel,lower_skel]
-	height_id = [str(standardize(int(height_ratio_left))), str(standardize(int(height_ratio_right)))]
-
-
-
-	return skelly_id, width_id, height_id
+	#STEP-03: Derive the ratios of the unit vector to every line segment in the skeleton.
+	sk_ratios = [
+				#Skeleton Right
+				get_segment(skeleton_points[12], skeleton_points[2])/unit_vector, #unit -> right shoulder 0
+				get_segment(skeleton_points[2], skeleton_points[3])/unit_vector, #unit -> right arm 1
+				get_segment(skeleton_points[3], skeleton_points[4])/unit_vector, #unit -> right forearm 2
+				get_segment(skeleton_points[2], skeleton_points[5])/unit_vector, #unit -> right torso 3
+				get_segment(skeleton_points[5], skeleton_points[13])/unit_vector, #unit -> right hip 4
+				get_segment(skeleton_points[5], skeleton_points[6])/unit_vector, #unit -> right thigh 5
+				get_segment(skeleton_points[6], skeleton_points[7])/unit_vector, #unit -> right leg 6
+				
+				#Skeleton Middle
+				get_segment(skeleton_points[11], skeleton_points[12])/unit_vector, #unit -> Head 7
+				get_segment(skeleton_points[12], skeleton_points[13])/unit_vector, #unit -> Middle Torso 8
+				
+				#Skeleton Left
+				get_segment(skeleton_points[12], skeleton_points[16])/unit_vector, #unit -> left shoulder 9
+				get_segment(skeleton_points[16], skeleton_points[17])/unit_vector, #unit -> left arm 10
+				get_segment(skeleton_points[17], skeleton_points[18])/unit_vector, #unit -> left forearm 11
+				get_segment(skeleton_points[16], skeleton_points[19])/unit_vector, #unit -> left torso 12
+				get_segment(skeleton_points[13], skeleton_points[19])/unit_vector, #unit -> left hip 13
+				get_segment(skeleton_points[19], skeleton_points[20])/unit_vector, #unit -> left thigh 14
+				get_segment(skeleton_points[20], skeleton_points[21])/unit_vector #unit -> left leg 15
+			   ]
+	
+	#Derive the skeleton feature vector from the given ratios
+	skeleton = [
+				#Skeleton Right
+				np.array(sk_ratios[:7]).sum() * mul_shift,
+				
+				#Skeleton Middle
+				np.array(sk_ratios[7:9]).sum() * mul_shift,
+				
+				#Skeleton Left
+				np.array(sk_ratios[9:]).sum() * mul_shift
+			   ]
+	
+	#Derive the length of the skeleton from its ratios
+	#select right or left leg based on length
+	leg_length = max(np.array(sk_ratios[14:]).sum(), np.array(sk_ratios[5:7]).sum()) #max([left leg, right leg])
+	
+	#Length = head length & torso length & leg length
+	length = [(unit_vector/100) * mul_shift, sk_ratios[8] * mul_shift, leg_length * mul_shift]
+	
+	#Derive the width feature vector from the given points
+	#Width = shoulder width & waist width
+	width = [(sk_ratios[0]+sk_ratios[9]) * mul_shift, (sk_ratios[4]+sk_ratios[13]) * mul_shift]
+	
+	return (skeleton, length, width)
 
 
 def SkinFeatureExtractor(frame):
@@ -460,5 +436,3 @@ def SkinFeatureExtractor(frame):
 		output_color_array.append(str(i))
 
 	return output_color_array
-
-

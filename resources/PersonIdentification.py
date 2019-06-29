@@ -21,15 +21,16 @@ database.init_app(application)
 application.app_context().push()
 database.create_all()
 
-FEATURE_TOLORANCE = [30, 20, 170, 815, 420, 170] #[hair, face, skin, skeleton, height, width]
-PROFILE_TOLORANCE = 2
-FEATURE_WEIGHTS = [1, 1, 1, 1, 1, 1]
+FEATURE_TOLERANCE = [35, 20, 150, 900, 280, 120] #[hair, face, skin, skeleton, height, width]
+PROFILE_TOLERANCE = 4
+FEATURE_WEIGHTS = [1, 3, 1, 1, 1, 1]
 #-------------------------------------------------------------------------------
 
 #-----------------------------------WEB DEFINITION------------------------------
 @application.route("/add", methods=["POST"])
 def add():
 	#Add a new person to the database
+	print("="*66)
 	#Format: {"Feature Matrix" : [["<feature data ints>", ...], ...]}
 	response = False
 	data = json.loads(request.data)
@@ -37,19 +38,17 @@ def add():
 	#format data
 	for i in range(len(data)):
 		for j in range(len(data[i])):
-			data[i][j] = int(data[i][j])
+			data[i][j] = float(data[i][j])
 	
 	#Generate a alpha-numeric label for the person
 	start = ''.join(random.choices(string.ascii_letters, k=3))
 	end = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 	label = start+'-'+end
 	
-	print(label, data)
+	print("Added a new person to the database: ", label)
 	#Multi-Linear Transform
-	"""
-	# Use Goedel’s transform on matrix to build a ML-point
-	pnt = np.array([Decimal("."+''.join(feature)) for freature in data["Feature Matrix"]])
-	"""
+	
+	print("="*66)
 	#add to database if it doesn't already exists
 	if(Profiles.query.filter_by(point=json.dumps(data)).first() is None):
 		person = Profiles(id=label, point=json.dumps(data), hair=json.dumps(data[0]), face=json.dumps(data[1]), skin=json.dumps(data[2]), skeleton=json.dumps(data[3]), height=json.dumps(data[4]), width=json.dumps(data[5]))
@@ -64,7 +63,7 @@ def add():
 
 @application.route("/query", methods=["POST"])
 def query():
-	#print("in query")
+	print("="*66)
 	#retuns the label for a given point
 	data = json.loads(request.data)
 	labels = []
@@ -72,56 +71,76 @@ def query():
 	#format data
 	for i in range(len(data)):
 		for j in range(len(data[i])):
-			data[i][j] = int(data[i][j])
+			data[i][j] = float(data[i][j])
 	
 	#STEP-01: Get all points in the map
 	map = MultiLinearMap.query.all()
 	#print("got map")
 	
-	#STEP-02: Compair given profile to points on the map
+	#STEP-02: Compare given profile to points on the map
 	for point in map:
+	
+		#get the centroid
 		centroid = json.loads(point.centroid)
-		simularity_score = 0 #range: [-6,6]
-		#print("Calculating norms.")
+		similarity_score = 0 #range: [-6,6]
+		percent_similar = 0
+		
+		#compare the current point to all centroids
 		norm = None
 		for i in range(len(data)):
 			dv = np.array(data[i])
 			cv = np.array(centroid[i])
-			#print("DV: ", dv)
-			#print("CV: ", cv)
+			
 			if(len(dv) != len(cv)):
-				simularity_score -= 1 * FEATURE_WEIGHTS[i]
-				#[hair, skin, face, skeleton, height, width]
-				print("Failed on: ", "hair" if(i==0) else "skin" if(i==1) else "face" if(i==2) else "skelly" if(i==3) else "height" if(i==4) else "width")
+				#If feature vectors are not the same length then exit
+				print("Failed on: ", "hair" if(i==0) else "skin" if(i==1) else "face" if(i==2) else "skelly" if(i==3) else "height" if(i==4) else "width", "Exiting comparison...")
 				break
 			else:
-				norm = np.linalg.norm(dv - cv)
-			print("hair" if(i==0) else "face" if(i==1) else "skin" if(i==2) else "skelly" if(i==3) else "height" if(i==4) else "width", " Norm: ", norm, end=" ")
-			#this applies equal weighting to each feature
-			if(norm <= FEATURE_TOLORANCE[i]):
-				simularity_score += 1 * FEATURE_WEIGHTS[i]
+				#calculate the normative similarity between the two points
+				norm = np.linalg.norm(cv - dv)
+			
+			#Display the norms
+			print("Hair" if(i==0) else "Face" if(i==1) else "Skin" if(i==2) else "Skeleton" if(i==3) else "Length" if(i==4) else "Width", " Norm: ", norm, end=" ")
+			
+			#Check if the norm is within the given tolerance
+			percent_similar += (FEATURE_TOLERANCE[i]/(norm+FEATURE_TOLERANCE[i]))*FEATURE_WEIGHTS[i]
+			if(norm <= FEATURE_TOLERANCE[i]):
+				similarity_score += 1  * FEATURE_WEIGHTS[i]
+				#percent_similar += (1 - (norm/FEATURE_TOLERANCE[i])) * FEATURE_WEIGHTS[i]
 			else:
-				print(" Fail! Variance out of tolorance.", end=" ")
+				#percent_similar += (1 - (norm/FEATURE_TOLERANCE[i])) * FEATURE_WEIGHTS[i]
+				print(" Fail! Variance out of tolerance.", end=" ")
 			print()
-		#STEP-02A: If match then update centroid
-		print("Simularity: ", simularity_score)
+			
+		#Display the label on the console
+		print("Label: ", point.label," Similarity: ", similarity_score, "Percent Similar: ", round((percent_similar/sum(FEATURE_WEIGHTS)) * 100), "%")
 		print()
-		if(np.isclose(simularity_score, len(data), atol=PROFILE_TOLORANCE)):
-			labels.append((point.label, simularity_score))
-			for i in range(len(data)):
+		
+		#STEP-02A: If match then add to candidates, TODO: - if the current point is better than the centroid then update the centroid
+		same_face = np.linalg.norm(np.array(data[1]) - np.array(centroid[1])) == 0
+		close = np.isclose(similarity_score, sum(FEATURE_WEIGHTS), atol=PROFILE_TOLERANCE)
+		print("CLOSE: ", close, "SAME FACE: ", same_face)
+		if(close or same_face):
+			labels.append([point.label, (percent_similar/sum(FEATURE_WEIGHTS)) * 100])
+			for i in [0,2,3,4,5]:
 				dv = np.array(data[i])
 				cv = np.array(centroid[i])
-				centroid[i] =  list((dv+cv)/2)
-			#point.centroid = json.dumps(centroid)
-			#database.session.commit()
+				norm = np.linalg.norm(cv - dv)
+				if(norm >= FEATURE_TOLERANCE[i]):
+					centroid[i] =  list((dv+cv)/2)
+			point.centroid = json.dumps(centroid)
+			database.session.commit()
 			
 			
 	#STEP-02B: return the most similar label or return false if no labels found
+	print("="*66)
 	if(len(labels) == 0):
 		return json.dumps(False)
 	else:
 		labels.sort(key=operator.itemgetter(1))
-		return json.dumps(labels[0])
+		candidate_match = labels[-1]
+		candidate_match[1] = round(candidate_match[1])
+		return json.dumps(candidate_match)
 
 @application.route("/query_feature", methods=["GET", "POST"])
 def query_by_feature():
