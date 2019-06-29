@@ -3,10 +3,11 @@
 const express = require('express'),
 	app = express(),
 	request = require('request'),
-	path = require('path')
+	path = require('path'),
+	upload = require('./resources/js/upload.js');
 	//bootstrap = require('bootstrap')
 	//jquery = require('jquery');
-    
+
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.set(express.static(path.join(__dirname + './views')));
@@ -16,6 +17,14 @@ var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
 app.locals.progress = "0";
+	//path = require('path'),
+	//upload = require('./upload.js');
+	//bootstrap = require('bootstrap')
+	//jquery = require('jquery');
+
+app.use(express.static(path.join(__dirname + '/resources/css')));
+app.set(express.static(path.join(__dirname + 'views')));
+app.set('view engine', 'ejs');
 
 //app.set('views', 'views');
 
@@ -68,6 +77,23 @@ app.post('/submit-form', (req, res) => {
 app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress})
 });
+
+//Backend stuff
+app.use(upload.uploadAndConvert);
+
+app.post('/fileupload', function(req, res){
+	return res.end();
+});
+
+app.get('/uploadtest', function (req, res){
+			res.writeHead(200, {'Content-type': 'text/html'});
+			res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+			res.write('<input type="file" name="input" multiple="multiple"><br>');
+			res.write('<input type="submit">');
+			res.write('</form>');
+			return res.end();
+});
+// End backend stuff
 
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
