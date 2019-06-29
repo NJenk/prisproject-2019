@@ -1,4 +1,4 @@
-exports.pathToPRIS = 'resources/';
+const pathToPRIS = process.cwd()+'\\resources\\';
 
 var http = require('http');
 var formidable = require('formidable');
@@ -7,12 +7,12 @@ var fs = require('fs');
 var process_spawner = require('child_process');
 
 var doPRIS = function(fName){
-	var PRIS = process_spawner.spawn('python', [exports.pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:exports.pathToPRIS});
+	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
 	PRIS.stderr.pipe(process.stderr);
 	// PRIS.stdout.on('data', (data) => {
 	// });
 	PRIS.on('exit', function(e){
-		fs.unlink("./upload_tmp/"+fName+".avi", (err) =>{
+		fs.unlink("./resources/upload_tmp/"+fName+".avi", (err) =>{
 			if(err) throw err;
 			console.log('Video deleted!');
 		})
@@ -29,7 +29,7 @@ exports.uploadAndConvert = function(req, res, next){
 		}
 		var type = file.type.substring(0,5);
 		if(type=='video'){
-			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './upload_tmp/'+fName+'.avi']);
+			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
 			ffmpeg.on('close',function(e){
 				fs.unlink(file.path, (err) => {
 					if (err) throw err;
@@ -39,7 +39,7 @@ exports.uploadAndConvert = function(req, res, next){
 			});
 		}
 		else if(type=='image'){
-			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./upload_tmp/'+fName+'.avi']);
+			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
 			ffmpeg.on('close',function(e){
 				fs.unlink(file.path, (err) => {
 					if (err) throw err;
@@ -64,7 +64,6 @@ exports.uploadAndConvert = function(req, res, next){
 	form.parse(req, function(err, fields, files){
 
 	});
-	next();
 }
 
 // http.createServer(function (req, res){
