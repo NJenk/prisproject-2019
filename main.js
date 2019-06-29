@@ -7,7 +7,7 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js');
 	//bootstrap = require('bootstrap')
 	//jquery = require('jquery');
-    
+
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.set(express.static(path.join(__dirname + './views')));
@@ -17,8 +17,8 @@ var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
 app.locals.progress = "0";
-	path = require('path'),
-	upload = require('./upload.js');
+	//path = require('path'),
+	//upload = require('./upload.js');
 	//bootstrap = require('bootstrap')
 	//jquery = require('jquery');
 
@@ -98,4 +98,3 @@ app.get('/uploadtest', function (req, res){
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
 });
-
