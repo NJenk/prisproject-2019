@@ -3,6 +3,7 @@
 const express = require('express'),
 	app = express(),
 	request = require('request'),
+<<<<<<< HEAD
 	path = require('path')
 	//bootstrap = require('bootstrap')
 	//jquery = require('jquery');
@@ -16,6 +17,16 @@ var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
 app.locals.progress = "0";
+=======
+	path = require('path'),
+	upload = require('./upload.js');
+	//bootstrap = require('bootstrap')
+	//jquery = require('jquery');
+
+app.use(express.static(path.join(__dirname + '/resources/css')));
+app.set(express.static(path.join(__dirname + 'views')));
+app.set('view engine', 'ejs');
+>>>>>>> backend
 
 //app.set('views', 'views');
 
@@ -39,7 +50,11 @@ app.get('/Upload', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 })
 app.get('/About', (req, res) => {
+<<<<<<< HEAD
 	res.render('About', {root: __dirname + '/views/'})
+=======
+	res.render('About', {root: __dirname + '/views/'});
+>>>>>>> backend
 })
 app.get('/FAQ', (req, res) => {
 	res.render('FAQ', {root: __dirname + '/views/'});
@@ -51,6 +66,7 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 })
 
+<<<<<<< HEAD
 app.post('/submit-form', (req, res) => {
 	res.render('Upload');
 
@@ -72,3 +88,27 @@ app.get('/getprogress', (req, res) => {
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
 });
+=======
+
+//Backend stuff
+app.use(upload.uploadAndConvert);
+
+app.post('/fileupload', function(req, res){
+	return res.end();
+});
+
+app.get('/uploadtest', function (req, res){
+			res.writeHead(200, {'Content-type': 'text/html'});
+			res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+			res.write('<input type="file" name="input" multiple="multiple"><br>');
+			res.write('<input type="submit">');
+			res.write('</form>');
+			return res.end();
+});
+// End backend stuff
+
+
+const server = app.listen(3000, function() {
+	console.log(`Server started on port ${server.address().port}`);
+});
+>>>>>>> backend
