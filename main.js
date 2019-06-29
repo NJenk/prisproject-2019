@@ -3,8 +3,8 @@
 const express = require('express'),
 	app = express(),
 	request = require('request'),
-<<<<<<< HEAD
-	path = require('path')
+	path = require('path'),
+	upload = require('./resources/js/upload.js');
 	//bootstrap = require('bootstrap')
 	//jquery = require('jquery');
     
@@ -17,7 +17,6 @@ var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
 app.locals.progress = "0";
-=======
 	path = require('path'),
 	upload = require('./upload.js');
 	//bootstrap = require('bootstrap')
@@ -26,7 +25,6 @@ app.locals.progress = "0";
 app.use(express.static(path.join(__dirname + '/resources/css')));
 app.set(express.static(path.join(__dirname + 'views')));
 app.set('view engine', 'ejs');
->>>>>>> backend
 
 //app.set('views', 'views');
 
@@ -50,11 +48,7 @@ app.get('/Upload', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 })
 app.get('/About', (req, res) => {
-<<<<<<< HEAD
 	res.render('About', {root: __dirname + '/views/'})
-=======
-	res.render('About', {root: __dirname + '/views/'});
->>>>>>> backend
 })
 app.get('/FAQ', (req, res) => {
 	res.render('FAQ', {root: __dirname + '/views/'});
@@ -66,7 +60,6 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 })
 
-<<<<<<< HEAD
 app.post('/submit-form', (req, res) => {
 	res.render('Upload');
 
@@ -85,11 +78,6 @@ app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress})
 });
 
-const server = app.listen(3000, function() {
-	console.log(`Server started on port ${server.address().port}`);
-});
-=======
-
 //Backend stuff
 app.use(upload.uploadAndConvert);
 
@@ -107,8 +95,7 @@ app.get('/uploadtest', function (req, res){
 });
 // End backend stuff
 
-
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
 });
->>>>>>> backend
+
