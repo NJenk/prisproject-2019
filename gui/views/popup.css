@@ -10,6 +10,6 @@ html, body {
     height: 100%;
     margin: 0 auto -98px; /* the bottom margin is the negative value of the footer's height */
 }
-.footer, .push {
-    height: 98px; /* .push must be the same height as .footer */
+.footer{
+    height: 98px; 
 }
