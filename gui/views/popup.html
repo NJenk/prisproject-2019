@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Popup</title>
+</head>
+<body>    
+
+    <div class="wrapper"><div class="push"></div></div>
+    <div class="footer">    
+        <div class="alert alert-info">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            </br><strong>Processing Complete : </strong> Media has been successfully uploaded.
+            </br></br>   
+        </div>
+    </div>
+
+</body>
+
+<script>   
+    window.setTimeout(function () {
+        $(".alert-info").fadeTo(300, 0.00); 
+    }, 3000);
+</script>
+</html>
