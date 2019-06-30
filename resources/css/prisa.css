@@ -43,3 +43,8 @@ footer {
     left: 0;
     padding: .25em;
 }
+
+#pb {
+    width: 0%;
+    background-color: limegreen
+}
