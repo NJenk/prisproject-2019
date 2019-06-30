@@ -6,6 +6,10 @@ from FeatureExtraction import FeatureExtractionModule
 import requests
 import json, traceback
 import sys
+import os
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(dir_path)
 
 class PersonReIdentificationSystemCore():
 	
@@ -14,6 +18,10 @@ class PersonReIdentificationSystemCore():
 		self.person_detection = PersonDetectionModule("box")
 		self.feature_extraction = FeatureExtractionModule()
 		self.person_identification_url = 'http://127.0.0.1:8080/'
+		self.frames_processed = 0
+		self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) # 5fps for a 10s video
+		
+		self.frames_left = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) 
 	
 	def display(self, mode, count=0, condition=True, frame=None, fMatrix=None, box=None, label=[0, "1", "None", "None"]):
 		if(mode == 0):
@@ -81,6 +89,7 @@ class PersonReIdentificationSystemCore():
 		print("Processing video...")
 		condition = True
 		while(condition):
+			
 			#STEP-01: Pull the frame
 			condition, frame = self.reader.read()
 		
@@ -123,10 +132,26 @@ class PersonReIdentificationSystemCore():
 						count += 1
 				self.display(4) #comment out to disable matrix display
 				
+				self.frames_processed += 1
+				self.frames_left = self.total_frames - self.frames_processed
+
+				self.percent_frames = self.frames_processed/self.total_frames
+				self.percent_frames = self.percent_frames * 100
+
+				print("curr frames: "+ str(self.frames_processed)) 
+				print("total frames: "+ str(self.total_frames)) 
+				
+				print("PD:"+str(self.percent_frames+1)+"%")
+				sys.stdout.flush()
+
 				#Display the output for the demo
 				#condition = self.display(1, condition, frame=frame)
+
 		self.reader.release()
 		cv2.destroyAllWindows()
+
+		#Need to reset the bar after the first file finishes, and probably need to send a message to the front about how many are left.
+		print('Jobs done!')
 
 #==================driver for the PRIS core================================
 if(__name__=="__main__"):
@@ -136,4 +161,3 @@ if(__name__=="__main__"):
 	reader = cv2.VideoCapture(filename)
 	core = PersonReIdentificationSystemCore(reader)
 	core.process_video()
-	

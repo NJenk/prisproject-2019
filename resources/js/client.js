@@ -1,13 +1,9 @@
-console.log("yeah we have js");
-
 window.setInterval(function(){
     doajax();
   }, 1000);
 
 function doajax()
 {
-    console.log('were going to getprogress');
-
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/getprogress');
     xhr.onload = function() {
