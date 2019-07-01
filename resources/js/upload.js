@@ -6,11 +6,16 @@ var fs = require('fs');
 
 var process_spawner = require('child_process');
 
-var doPRIS = function(fName){
+var doPRIS = function(fName, req){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
 	PRIS.stderr.pipe(process.stderr);
-	// PRIS.stdout.on('data', (data) => {
-	// });
+	PRIS.stdout.on('data', (data) => {
+		if(data.toString().indexOf("PD:") != -1)
+		{
+				//updates the global progress var.
+				req.app.locals.progress = data.toString().substring(data.toString().indexOf("PD:")+3, data.toString().indexOf("%"));
+		}
+	});
 	PRIS.on('exit', function(e){
 		fs.unlink("./resources/upload_tmp/"+fName+".avi", (err) =>{
 			if(err) throw err;
@@ -35,7 +40,7 @@ exports.uploadAndConvert = function(req, res, next){
 					if (err) throw err;
 					console.log(file.path+" deleted successfully");
 				});
-				doPRIS(fName);
+				doPRIS(fName, req);
 			});
 		}
 		else if(type=='image'){
@@ -45,7 +50,7 @@ exports.uploadAndConvert = function(req, res, next){
 					if (err) throw err;
 					console.log(file.path+" deleted successfully");
 				});
-				doPRIS(fName);
+				doPRIS(fName, req);
 			});
 		}
 		else{
@@ -56,7 +61,7 @@ exports.uploadAndConvert = function(req, res, next){
 			});
 		}
 
-		res.write('File uploaded!\n');
+		//res.write('File uploaded!\n');
 	});
 	form.on('end', function(){
 		next();
