@@ -1,42 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="../resources/css/prisa.css">
-        <!--<link rel="stylesheet" type="text/css" href="upload.css"> !-->
-        <title>Upload</title>
-    </head>
-    <body>
-        <nav class="navbar sticky-top navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="layout.html">PRISA</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active"><a class="nav-link" href="layout.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Upload.html">Upload<span class="sr-only">(current)</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="About.html">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="FAQ.html">FAQ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Contact.html">Contact</a></li>
-                </ul>
-            </div>
-        </nav>
-            <!--For borders -->
-            <div id="left"></div><div id="right"></div>
-            <div id="top"></div><div id="bottom"></div>
-
-            <div class="container">
-                <p>
-                <br><strong>Please Note:</strong> 
-                PRISA will take some time to process files once they have been uploaded.<br>
-                PRISA may take individual .jpg or .avi file formats.         
-                </p>
-            <button class="button-upload">Add Media</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../resources/css/prisa.css">
+    <!--<link rel="stylesheet" type="text/css" href="upload.css"> !-->
+    <title>Upload</title>
+</head>
+<body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="layout.html">PRISA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active"><a class="nav-link" href="layout.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="Upload.html">Upload<span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="About.html">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="FAQ.html">FAQ</a></li>
+                <li class="nav-item"><a class="nav-link" href="Contact.html">Contact</a></li>
+            </ul>
         </div>
+    </nav>
+    <!--For borders --><div id="left"></div><div id="right"></div><div id="top"></div><div id="bottom"></div>
 
-        </div>        
-    </body>
+    <div class="container">
+        <p>
+        <br><strong>Please Note:</strong> 
+        PRISA will take some time to process files once they have been uploaded.<br>
+        PRISA may take individual .jpg or .avi file formats.         
+        </p>
+        <button class="button-upload">Add Media</button> 
+        <br><br>  
+        <hr>         
+    </div>
+    
+    <div class="upload-comparisons">
+                    
+        <img src="images/nick1.jpg" alt="upload" class="image-upload">
+        <br><br>
+        <p class="container"><strong>Is this the same person? Click on image(s) to confirm.</strong></p>
+        <div class="compare">
+            <div class="image-compare"><img src="images/nick2.jpg" alt="compare" class="image-db"></div>
+            <div class="image-compare"><img src="images/nick3.jpg" alt="compare" class="image-db"></div>
+            <div class="image-compare"><img src="images/wall.jpg" alt="compare" class="image-db"></div>
+        </div>
+    </div>   
+    <div class="footer"></div>    
+</body>
 </html>

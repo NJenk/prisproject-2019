@@ -1,6 +1,12 @@
 * {
     margin: 0;
 }
+hr{
+    height: 3px;
+    margin:55px;
+    color:black;
+    background-color: black;
+}
 body{
     background-color: rgb(219, 219, 219);
 }
@@ -8,7 +14,6 @@ body{
     position: center;
     text-align: center;
     border-top: none;
-    border-bottom: none;
 }
 .container ul {
     text-align: left;
@@ -23,25 +28,45 @@ body{
 .navbar-dark {
     background-color: blueviolet;
 }
-#top, #bottom, #left, #right {
-	background: black;
-    position: fixed;
-    margin-left: 55px;
-    margin-right: 55px;
+/* Media upload comparison section*/
+.upload-comparisons{    
+    margin-top: 75px;
 }
-#left, #right {
-    top: 0; bottom: 0;
-    width: .25em;
+.image-upload{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 65%;    
 }
-#left { left: 0; }
-#right { right: 0; }
-		
-#top, #bottom {
-    left: 0; right: 0;
-    height: 0px;
+.image-db{width:100%;}
+.compare{
+    padding-left: 55px;
+    padding-right: 55px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width:95%;
 }
-#top { 
-    top: 0; 
+.compare::after{
+    content: "";
+    clear: both;
+    display: table;
+}
+.image-compare{   
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+}
 
-}
+/*border formatting*/
+#top, #bottom, #left, #right {background: black;position: fixed;margin-left: 55px;margin-right: 55px;}
+#left, #right {top: 0; bottom: 0;width: .25em;}
+#left { left: 0; }
+#right { right: 0; }		
+#top, #bottom {left: 0; right: 0; height: 0px;}
+#top {top: 0;}
 #bottom { bottom: 0; }
+
+.footer{
+    height: 98px; 
+}
