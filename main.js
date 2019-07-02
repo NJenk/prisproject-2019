@@ -38,13 +38,14 @@ app.get('/FAQ', (req, res) => {
 app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
-app.get('/Popup', (req, res) => {
-	res.render('popup', {root: __dirname + '/views/'});
-});
 
 //Checking result view
-app.post('/Results', (req, res) => {
+app.get('/Results', (req, res) => {
 	res.render('Results', {root: __dirname + '/views/'});
+});
+
+app.get('/Popup', (req, res) => {
+	res.render('popup', {root: __dirname + '/views/'});
 });
 
 app.use(upload.uploadAndConvert);
