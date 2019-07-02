@@ -42,6 +42,11 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
+//Checking result view
+app.post('/Results', (req, res) => {
+	res.render('Results', {root: __dirname + '/views/'});
+});
+
 app.use(upload.uploadAndConvert);
 app.post('/submit-form', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
@@ -51,6 +56,8 @@ app.post('/submit-form', (req, res) => {
 app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress})
 });
+
+
 
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
