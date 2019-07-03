@@ -4,13 +4,15 @@ body {
 
 .container {
     border: .2em solid black;
-    position: center;
+    position: fixed;
     text-align: center;
     border-top: none;
     border-bottom: none;
     padding: 10px;
     height: 100%;
-    background-color: white;
+    background-color: lightgray;
+    right: 0px;
+    left: 0px;
 }
 
 .container p {
