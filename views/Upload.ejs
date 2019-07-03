@@ -1,60 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <script src="public/client.js"></script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="public/prisa.css">
+        <%include Header.ejs %>
         <title>Upload</title>
     </head>
     <body>
-        <nav class="navbar sticky-top navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">PRISA</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Upload">Upload</a><span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="About">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="FAQ">FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Contact">Contact</a>
-                </li>
-                </ul>
-            </div>
-        </nav>
+        <%include navbar.ejs %>
         <div class="container">
             <div class="progress">
                 <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <form method="POST" action="/submit-form">
-                <input type="text" name="username" />
-                <div class="btn">
-                    <input type="file" multiple accept=".jpg, .avi">
-                </div>
-                <div>
-                    <input type="submit" />
-                </div>
+            
+            <form action="submit-form" method="post" enctype="multipart/form-data">
+            <input type="file" name="input" multiple="multiple" accept=".avi, .jpg"><br>
+            <input type="submit">
             </form>
         </div>
-        <footer class="page-footer font-small indigo">
-            <div class="footer-copyright text-center py-3">
-                PRISA Version 1.0, 2019
-            </div>
-        </footer>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <%include Footer.ejs %>
     </body>
 </html>
