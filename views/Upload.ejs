@@ -10,12 +10,37 @@
             <div class="progress">
                 <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            
             <form action="submit-form" method="post" enctype="multipart/form-data">
-            <input type="file" name="input" multiple="multiple" accept=".avi, .jpg"><br>
-            <input type="submit">
+                <input type="file" name="input" multiple="multiple" accept=".avi, .jpg" id="upload"><br>
+                <input type="submit" class="submit">
             </form>
         </div>
         <%include Footer.ejs %>
+        <script>
+            $(function() {
+                var // Define maximum number of files.
+                    max_file_number = 150,
+                    // Define your form id or class or just tag.
+                    $form = $('form'), 
+                    // Define your upload field class or id or tag.
+                    $file_upload = $('#upload', $form), 
+                    // Define your submit class or id or tag.
+                    $button = $('.submit', $form); 
+
+                // Disable submit button on page ready.
+                $button.prop('disabled', 'disabled');
+
+                $file_upload.on('change', function () {
+                    var number_of_images = $(this)[0].files.length;
+                    if (number_of_images > max_file_number) {
+                        alert(`You can upload maximum ${max_file_number} files.`);
+                        $(this).val('');
+                        $button.prop('disabled', 'disabled');
+                    } else {
+                        $button.prop('disabled', false);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
