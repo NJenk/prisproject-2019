@@ -78,37 +78,6 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', async (req, res) => {
-var profs = req.body.profile;
-	
-	var curr_prof = req.body.current;
-	//var curr_prof = 'SuT-eKa8qty';
-	profs.push(curr_prof)
-	let max = "";
-	let results = "";
-
-	//This should create a new data.
-	var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', profs]);
-
-	data.stderr.pipe(process.stderr);
-
-	data.stdout.on('data', (outdata) => {
-		console.log(outdata.toString());
-	});
-
-	data.on('exit', function(e){
-		console.log('database is finished, carry on.');
-		console.log(e);
-		res.render('Query', {root: __dirname + '/views/'});
-	});
-
-	//do sql stuff here?
-	//Here we would have access to the currently uploaded profile, as well as any checked similar profiles.
-	//For each of the selected profiles, lets say current profile is 1, selected are 2 and 3.
-	//We would insert into POI table a row with autoincremented ID and POI ID, and a blank PROFILE id.
-	//db.run('')
-});
-
 app.use(upload.uploadAndConvert);
 app.post('/submit-form', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
