@@ -32,6 +32,9 @@ app.get('/Upload', (req, res) => {
 app.get('/Query', (req, res) => {
 	res.render('Query', {root: __dirname + '/views/'});
 })
+app.get('/Logs', (req, res) => {
+	res.render('Logs', {root: __dirname + '/views/'});
+})
 app.get('/About', (req, res) => {
 	res.render('About', {root: __dirname + '/views/'})
 })
