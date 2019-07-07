@@ -193,6 +193,6 @@ if(__name__=="__main__"):
                 core.process_video()
         else:
                 fData = core.process_video(True,args.query_filename)
-                with open("../upload_tmp/"+args.query_filename+".json",'w') as output_file:
-                        output_file.write(json.dumps(fData))
+                print("Results JSON:")
                 print(json.dumps(fData,indent=4))
+                sys.stdout.flush()

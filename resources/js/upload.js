@@ -1,4 +1,5 @@
 const pathToPRIS = process.cwd()+'\\resources\\PRIS\\';
+const JSONMarker = "Results JSON:";
 
 var http = require('http');
 var formidable = require('formidable');
@@ -6,15 +7,20 @@ var fs = require('fs');
 
 var process_spawner = require('child_process');
 
-var doPRIS = function(fName, req){
+exports.doPRIS = function(fName, req){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
 		console.log("Data: "+data);
-		if(data.toString().indexOf("PD:") != -1)
+		sdata = data.toString();
+		if(sdata.startsWith(JSONMarker)){
+			var jsonData = sdata.substring(JSONMarker.length,data.toString().length);
+			console.log(jsonData);
+		}
+		if(sdata.indexOf("PD:") != -1)
 		{
 				//updates the global progress var.
-				req.app.locals.progress = data.toString().substring(data.toString().indexOf("PD:")+3, data.toString().indexOf("%"));
+				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
 		}
 	});
 	PRIS.on('exit', function(e){
@@ -43,7 +49,7 @@ exports.uploadAndConvert = function(process){
 						if (err) throw err;
 						console.log(file.path+" deleted successfully");
 					});
-					doPRIS(fName, req);
+					process(fName, req);
 				});
 			}
 			else if(type=='image'){
@@ -53,7 +59,7 @@ exports.uploadAndConvert = function(process){
 						if (err) throw err;
 						console.log(file.path+" deleted successfully");
 					});
-					doPRIS(fName, req);
+					process(fName, req);
 				});
 			}
 			else{

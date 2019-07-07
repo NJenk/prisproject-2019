@@ -7,8 +7,8 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs');
-	
-    
+
+
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.set(express.static(path.join(__dirname + './views')));
@@ -39,7 +39,7 @@ app.get('/Logs', (req, res) => {
 		// The path to the log file needs updated when we know it.
         input: require('fs').createReadStream('resources\\logs\\testlog.txt')
         });
-        
+
 
         lineReader.on('line', function (line) {
             var logline = line.split(' ');
@@ -78,7 +78,7 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert);
+app.use(upload.uploadAndConvert(upload.doPRIS));
 app.post('/submit-form', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
