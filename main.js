@@ -37,7 +37,7 @@ app.get('/Logs', (req, res) => {
     var lineData = {};
     var lineReader = require('readline').createInterface({
 		// The path to the log file needs updated when we know it.
-        input: require('fs').createReadStream('resources\\logs\\testlog.txt')
+        input: require('fs').createReadStream('resources\\logs\\log.txt')
         });
 
 
