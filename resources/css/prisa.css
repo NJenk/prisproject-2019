@@ -1,7 +1,4 @@
-body {
-    background-color:teal;
-}
-
+body {background-color:teal;}
 .container {
     border: .2em solid black;
     position: fixed;
@@ -14,27 +11,21 @@ body {
     right: 0px;
     left: 0px;
 }
-
-.container p {
-    padding: 10px;
+.container p {padding: 10px;}
+.container ul {text-align: left;}
+p{
+    text-align: justify;
 }
 
-.container ul {
-    text-align: left;
+li{
+    font-weight: bold;
 }
-
-.p-2 {
-    text-align: left;
-}
-
-.navbar-dark {
-    background-color: black;
-}
+.p-2 {    text-align: left;}
+.navbar-dark {background-color: black;}
 form {
     position: relative;
     padding: .5em;
 }
-
 footer {
     background-color: black;
     color: white;
@@ -45,7 +36,6 @@ footer {
     left: 0;
     padding: .25em;
 }
-
 #pb {
     width: 0%;
     background-color: limegreen
