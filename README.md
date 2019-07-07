@@ -1,30 +1,28 @@
-# Installation
-1. Install Python 3.5+
-2. Upgrade pip: `pip install -upgrade pip`
-3. Install the following packages:
+# Installing Dependencies
+PRISA requires Python 3.5+
+
+Install the following packages with CMD:
    - OpenCV 4: `pip install opencv-python`
    - OpenCV 4 contributions: `pip install opencv-contrib-python`
-   - NumPy: `pip install numpy`
-   - Flask: `pip install Flask`
    - SQL Alchemy: `pip install Flask-SQLAlchemy`
    - CMake: `pip install cmake`
    - dlib: `pip install dlib`
+   - imutils: `pip install imutils`
+      * Windows dependency
    - Requests: `pip install requests`
+   - Face Recognition: `pip install face_recognition`
+   
+From the PRIS folder (Google Drive), drag over the following folders from `src/ib` into the prisproject `resources/PRIS` folder:
+* 3rdparty
+* bin
+* database
+* include
+* lib
+* models
+* TEMP
 
+# Running the Server
+PRISA currently runs on a local host.
 
-# Running the Code
-1. Locate `src/lib` in File Explorer and open CMD.
-2. Start the person ID module: `python PersonIdentification.py`
-3. Edit line 56 in `core.py` to include the filename of the video you wish to test.
-4. Start the core in CMD: `python core.py`
-
-# Changing the Video
-To change the video:
-1. Press CTRL+C to stop the core.
-2. Edit line 56 in `core.py` to include the filename of the video you wish to test.
-3. Start the core in CMD: `python core.py`
-
-# Restarting the Core with Fresh Resources
-1. Locate `src/lib/database` in File Explorer then delete `Person.db`
-2. Locate `src/lib/models` in File Explorer then double-click `reset_faces.py`
-3. Follow the steps in **Running the Code** above to restart the core.
+1. Change directory to `pris-project2019` in NodeJS CMD
+2. Type `node main.js` and press **Enter**
