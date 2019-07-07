@@ -7,8 +7,24 @@
     <body>
         <%include navbar.ejs %>
         <div class="container">
-            <p>View upload results below: </p>
-            <p></p>
+            <table id="logTable" class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Message</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                        <% for (var i = 0; i < data.length; i++) { %>
+                            <tr class= "bg-<%= data[i].code.toLowerCase(); %>">
+                                <td> <%= data[i].date %></td>
+                                <td> <%= data[i].time %></td>
+                                <td> <%= data[i].message %></td>
+                            </tr>
+                        <% } %>
+                </tbody>
+              </table>
         </div>
         <%include Footer.ejs %>
     </body>
