@@ -83,6 +83,11 @@ app.post('/submit-form', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
+app.use(upload.uploadAndConvert);
+app.post('/submit-query', (req, res) => {
+	res.render('Query', {root: __dirname + '/views/'});
+});
+
 //pulls back the global var with ajax.
 app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress})
