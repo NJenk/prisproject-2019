@@ -49,6 +49,17 @@
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
 
+                $('input[name="optradio"]').change(function() {
+                    let radio_val = $('input[name="optradio"]:checked').val();
+                    $file_upload.removeAttr("disabled");
+                    $file_upload.attr("accept", radio_val);
+                    if (radio_val == ".avi") {
+                        max_file_number = 1;
+                    }
+                    else {
+                        max_file_number = 1;
+                    }
+                });
                 $file_upload.on('change', function () {
                     var number_of_images = $(this)[0].files.length;
                     if (number_of_images > max_file_number) {
