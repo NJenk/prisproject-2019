@@ -13,3 +13,4 @@ function LoadImg(filename) {
     xmlhttp.open("GET", 'load.php?LoadImg='+filename );
     xmlhttp.send(null);
 }
+//I haven't been able to test this but I believe it'll work if they have the id number assigned to the profile
