@@ -32,6 +32,33 @@ app.get('/Upload', (req, res) => {
 app.get('/Query', (req, res) => {
 	res.render('Query', {root: __dirname + '/views/'});
 })
+app.get('/Logs', (req, res) => {
+	var logData = [];
+    var lineData = {};
+    var lineReader = require('readline').createInterface({
+		// The path to the log file needs updated when we know it.
+        input: require('fs').createReadStream('resources\\logs\\testlog.txt')
+        });
+        
+
+        lineReader.on('line', function (line) {
+            var logline = line.split(' ');
+            var message = "";
+            //Get the message into one single block.
+            for(var i = 3; i < logline.length; i++) {
+                message = message + logline[i] + " ";
+            }
+            lineData = {"date": logline[0],
+            "time": logline[1],
+            "code": logline[2],
+            "message": message};
+            logData.push(lineData);
+          });
+
+        lineReader.on('close', function() {
+            res.render('Logs', {root: __dirname + '/views/', data: logData});
+		});
+})
 app.get('/About', (req, res) => {
 	res.render('About', {root: __dirname + '/views/'})
 })
