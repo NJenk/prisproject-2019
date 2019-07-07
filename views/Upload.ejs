@@ -18,7 +18,7 @@
             <span class="radio"><label class="radio-inline"><input type="radio" name="optradio" value=".avi">.avi</label>
             </span>
             
-            <form action="submit-form" method="post" enctype="multipart/form-data">
+            <form action="submit-form" class="form_submit" method="post" enctype="multipart/form-data">
                 <!--New Upload Bar-->
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -50,7 +50,7 @@
                     $file_upload = $('#upload', $form), 
                     // Define your submit class or id or tag.
                     $button = $('submit', $form); 
-                    var submitButton = document.getElementsByClassName("input-group-prepend");
+                    
 
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');

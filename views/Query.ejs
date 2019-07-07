@@ -7,19 +7,36 @@
     <body>
         <%include navbar.ejs %>
         <div class="container">
+        
+        
+            Please select the type of file you would like to upload:
+            <span class="radio"><label class="radio-inline"><input type="radio" name="optradio" value=".jpg">.jpg</label>
+            </span>
+            <span class="radio"><label class="radio-inline"><input type="radio" name="optradio" value=".avi">.avi</label>
+            </span>
+            
+            <form action="submit-form" class="form_submit" method="post" enctype="multipart/form-data">
+                <!--New Upload Bar-->
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text submit">Upload</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" name= "input" class="custom-file-input" id="upload"
+                        aria-describedby="inputGroupFileAddon01" disabled>
+                        <label class="custom-file-label" for="inputGroupFile01">Choose File(s)</label>
+                    </div>
+                </div>
+                <!-- Help needed. Tried to make 'Upload' act as submit button. Failed.-->
+                <input type="submit" class="submit">
+            </form>
+
             <div class="progress">
                 <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <form method="POST" action="/submit-query">
-                <input type="text" name="username" />
-                <div class="btn">
-                    <input type="file" multiple accept=".jpg">
-                </div>
-                <div>
-                    <input type="submit" />
-                </div>
-            </form>
+
         </div>
+            
         <%include Footer.ejs %>
         <script>
             $(function() {
