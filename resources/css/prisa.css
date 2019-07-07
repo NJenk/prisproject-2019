@@ -40,3 +40,17 @@ footer {
     width: 0%;
     background-color: limegreen
 }
+progress:not([value]) {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+ }
+ progress[value]::-webkit-progress-value {
+     background-image: 
+    -webkit-linear-gradient(-45deg, transparent 33%, rgba(0, 0, 0, .1) 33%, rgba(0,0, 0, .1)        66%, transparent 66%),
+    -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)),
+    -webkit-linear-gradient(left, yellow, green );
+    height: 35px;
+    border-radius: 2px; 
+    background-size: 35px 20px, 100% 100%, 100% 100%;
+ }

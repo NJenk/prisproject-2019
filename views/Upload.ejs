@@ -10,10 +10,8 @@
         <br>
 
         <div class="container">
-            <div class="progress">
-                <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <!--New Upload Bar-->
+            
+            
             Please select the type of file you would like to upload:
             <span class="radio"><label class="radio-inline"><input type="radio" name="optradio" value=".jpg">.jpg</label>
             </span>
@@ -21,6 +19,7 @@
             </span>
             
             <form action="submit-form" method="post" enctype="multipart/form-data">
+                <!--New Upload Bar-->
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text submit">Upload</span>
@@ -31,9 +30,14 @@
                         <label class="custom-file-label" for="inputGroupFile01">Choose File(s)</label>
                     </div>
                 </div>
-
+                <!-- Help needed. Tried to make 'Upload' act as submit button. Failed.-->
                 <input type="submit" class="submit">
             </form>
+
+            <div class="progress">
+                <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+
         </div>
         <%include Footer.ejs %>
         <script>
@@ -45,7 +49,8 @@
                     // Define your upload field class or id or tag.
                     $file_upload = $('#upload', $form), 
                     // Define your submit class or id or tag.
-                    $button = $('.input-group-prepend', $form); 
+                    $button = $('submit', $form); 
+                    var submitButton = document.getElementsByClassName("input-group-prepend");
 
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
