@@ -7,7 +7,7 @@ var logs = require('./logManager.js');
 
 var process_spawner = require('child_process');
 
-exports.doPRIS = function(res, req, logger, fName){
+exports.PRISQuery = function(res, req, logger, fName){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
@@ -18,9 +18,40 @@ exports.doPRIS = function(res, req, logger, fName){
 		console.log("Data: "+data);
 		sdata = data.toString();
 		if(sdata.startsWith(JSONMarker)){
-			var jsonData = sdata.substring(JSONMarker.length,data.toString().length);
-			console.log(jsonData);
+			logger.success("Results received");
+			var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
+			res.set({'Content-Type':'application/json'});
+			res.send(jsonData);
+			res.end();
 		}
+		if(sdata.indexOf("PD:") != -1)
+		{
+				//updates the global progress var.
+				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
+		}
+	});
+	PRIS.on('exit', function(e){
+		fs.unlink("./resources/upload_tmp/"+fName+".avi", (err) =>{
+			if(err){
+				//logger.error(err);
+				logger.danger("NOT DELETED");
+				throw err;
+			}
+			console.log('Video deleted!');
+		})
+	});
+}
+
+exports.PRISUpload = function(res, req, logger, fName){
+	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
+	PRIS.stderr.on('data', (data)=>{
+		//logger.error(data.toString());
+		logger.danger("Processing FAILED");
+	});
+	PRIS.stderr.pipe(process.stderr);
+	PRIS.stdout.on('data', (data) => {
+		console.log("Data: "+data);
+		sdata = data.toString();
 		if(sdata.indexOf("PD:") != -1)
 		{
 				//updates the global progress var.

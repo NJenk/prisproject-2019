@@ -78,14 +78,14 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert(upload.doPRIS));
+app.use(upload.uploadAndConvert(upload.PRISUpload));
 app.post('/submit-form', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert);
+app.use(upload.uploadAndConvert(upload.PRISQuery));
 app.post('/submit-query', (req, res) => {
-	res.render('Query', {root: __dirname + '/views/'});
+
 });
 
 //pulls back the global var with ajax.
