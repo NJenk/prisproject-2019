@@ -4,28 +4,30 @@
         <%include Header.ejs %>
         <title>PRISA Home</title>
     </head>
-    <body>
+    <body data-spy="scroll" data-target=".navbar" data-offset="50">
         <%include navbar.ejs %>
         <div class="container">
             <h1>How to use PRISA</h1>
-            <b>Uploads:</b>
-            <div class="d-flex p-2">
+            <b class="upload-instructions">Uploads:</b>
+            <div class="d-flex p-2 smooth-scroll list-unstyled">
+                <ol>
+                    <li><a href=".upload-instructions"></a></li>
+                    <li><a href=".query-instructions"></a></li>
+                </ol>
                 <ol>
                     <li><p class="main-list">Click on 'Upload' menu option, you will be redirected to the Upload page (Note: PRISA only accepts .avi or .jpg file formats).
                     </p></li>
                     <li><p class="main-list">Once on the Upload page, you will see a progress bar and a field to submit a file(s).  
                     </p></li>
-                    <li><p class="main-list">To choose a file(s), click the button labelled, "Choose Files."
+                    <li><p class="main-list">To choose a file(s), click the button labelled, "Browse" or click in the white space.
                     </p></li>
                     <li><p class="main-list">There will be a File Explorer pop up in your browser, allowing you to search your computer for appropriate upload files.
                     </p></li>
                     <li><p class="main-list">To select multiple files, hold down the "command" key while clicking.
                     </p></li>
                     <li><p class="main-list">When finished, click "open" in your file browser with the appropriate file(s) selected.
-                    </p></li>
-                    <li><p class="main-list">Your file names should appear to the right of the "Choose Files" button.
-                    </p></li>
-                    <li><p class="main-list">When you are ready to submit for upload, click the "Submit" button.
+                    </p></li>                    
+                    <li><p class="main-list">When you are ready to submit for upload, click the "Upload" button.
                     </p></li>
                     <li><p class="main-list">The progress bar will inform you of the upload progress.
                     </p></li>
@@ -36,7 +38,7 @@
                 </ol>
             </div>
 
-            <b>Query:</b>
+            <b class="query-instructions">Query:</b>
             <div class="d-flex p-2">
                 <ol>
                     <li><p class="main-list">Click on 'Query' menu option, you will be redirected to the Query page (Note: PRISA only accepts .avi or .jpg file formats).
@@ -47,13 +49,9 @@
                     </p></li>
                     <li><p class="main-list">There will be a File Explorer pop up in your browser, allowing you to search your computer for appropriate upload files.
                     </p></li>
-                    <li><p class="main-list">To select multiple files, hold down the "command" key while clicking.
+                    <li><p class="main-list">When finished, click "open" in your file browser with the appropriate file selected.
                     </p></li>
-                    <li><p class="main-list">When finished, click "open" in your file browser with the appropriate file(s) selected.
-                    </p></li>
-                    <li><p class="main-list">Your file names should appear to the right of the "Choose Files" button.
-                    </p></li>
-                    <li><p class="main-list">When you are ready to submit for upload, click the "Submit" button.
+                    <li><p class="main-list">When you are ready to submit for upload, click the "Upload" button.
                     </p></li>
                     <li><p class="main-list">The progress bar will inform you of the upload progress.
                     </p></li>
