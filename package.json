@@ -2,6 +2,11 @@
   "name": "gui",
   "version": "1.0.0",
   "description": "GUI for PRISA",
+  "nodemonConfig":{
+    "ignore":[
+      "*.json"
+    ]
+  },
   "main": "main.js",
   "dependencies": {
     "bootstrap": "^4.3.1",

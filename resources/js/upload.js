@@ -7,9 +7,10 @@ var fs = require('fs');
 var process_spawner = require('child_process');
 
 var doPRIS = function(fName, req){
-	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
+	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
+		console.log("Data: "+data);
 		if(data.toString().indexOf("PD:") != -1)
 		{
 				//updates the global progress var.
@@ -24,51 +25,54 @@ var doPRIS = function(fName, req){
 	});
 }
 
-exports.uploadAndConvert = function(req, res, next){
-	var form = new formidable.IncomingForm();
-	form.multiples=true;
-	form.on('file',function(name, file){
-		var fName = "", len = Math.random()*6+8;
-		for(var i = 0; i < len; i++){
-			fName+=Math.round(Math.random()*9);
-		}
-		var type = file.type.substring(0,5);
-		if(type=='video'){
-			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
-			ffmpeg.on('close',function(e){
+//TODO(Nick): Finish using process function
+exports.uploadAndConvert = function(process){
+	return function(req, res, next){
+		var form = new formidable.IncomingForm();
+		form.multiples=true;
+		form.on('file',function(name, file){
+			var fName = "", len = Math.random()*6+8;
+			for(var i = 0; i < len; i++){
+				fName+=Math.round(Math.random()*9);
+			}
+			var type = file.type.substring(0,5);
+			if(type=='video'){
+				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
+				ffmpeg.on('close',function(e){
+					fs.unlink(file.path, (err) => {
+						if (err) throw err;
+						console.log(file.path+" deleted successfully");
+					});
+					doPRIS(fName, req);
+				});
+			}
+			else if(type=='image'){
+				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
+				ffmpeg.on('close',function(e){
+					fs.unlink(file.path, (err) => {
+						if (err) throw err;
+						console.log(file.path+" deleted successfully");
+					});
+					doPRIS(fName, req);
+				});
+			}
+			else{
+				//pull this out to a function maybe?
 				fs.unlink(file.path, (err) => {
 					if (err) throw err;
 					console.log(file.path+" deleted successfully");
 				});
-				doPRIS(fName, req);
-			});
-		}
-		else if(type=='image'){
-			var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
-			ffmpeg.on('close',function(e){
-				fs.unlink(file.path, (err) => {
-					if (err) throw err;
-					console.log(file.path+" deleted successfully");
-				});
-				doPRIS(fName, req);
-			});
-		}
-		else{
-			//pull this out to a function maybe?
-			fs.unlink(file.path, (err) => {
-				if (err) throw err;
-				console.log(file.path+" deleted successfully");
-			});
-		}
+			}
 
-		//res.write('File uploaded!\n');
-	});
-	form.on('end', function(){
-		next();
-	})
-	form.parse(req, function(err, fields, files){
+			//res.write('File uploaded!\n');
+		});
+		form.on('end', function(){
+			next();
+		})
+		form.parse(req, function(err, fields, files){
 
-	});
+		});
+	}
 }
 
 // http.createServer(function (req, res){
