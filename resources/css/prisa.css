@@ -11,17 +11,17 @@ body {background-color:teal;}
     right: 0px;
     left: 0px;
 }
-.container p {padding: 10px;}
+/*.container p {padding: 10px;}*/
 .container ul {text-align: left;}
-p{
-    text-align: justify;
-}
-
-li{
-    font-weight: bold;
-}
-.p-2 {    text-align: left;}
+.faq li{font-weight: bold;}
+p{text-align: justify;}
+.p-2 {text-align: left;}
 .navbar-dark {background-color: black;}
+ol{font-weight: bold;}
+.main-list{
+    font-weight: normal;
+    padding: 0px;
+}
 form {
     position: relative;
     padding: .5em;
