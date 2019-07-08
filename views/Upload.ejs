@@ -7,7 +7,6 @@
     <body>
         <%include navbar.ejs %>
         <div class="container">           
-            
             Please select the type of file you would like to upload:
             <span class="radio"><label class="radio-inline"><input type="radio" name="optradio" value=".jpg">.jpg</label>
             </span>
@@ -17,8 +16,8 @@
             <form action="submit-form" id="form-submit" method="post" enctype="multipart/form-data">
                 <!--New Upload Bar-->
                 <div class="input-group">
-                    <div class="input-group-prepend" onclick="submitForm();">
-                        <span class="input-group-text submit">Upload</span>
+                    <div class="input-group-prepend">
+                        <input type="submit" class="input-group-text submit" value="Upload" disabled/>
                     </div>
                     <div class="custom-file">
                         <input type="file" name= "input" class="custom-file-input" id="upload"
@@ -43,7 +42,7 @@
                     // Define your upload field class or id or tag.
                     $file_upload = $('#upload', $form), 
                     // Define your submit class or id or tag.
-                    $button = $('submit', $form); 
+                    $button = $('input[type=submit]', $form); 
                     
 
                 // Disable submit button on page ready.
@@ -74,12 +73,7 @@
                         $('input[name="optradio"]').prop('disabled', 'disabled');
                     }
                 });
-                
-
             });
-            function submitForm() {
-                    document.getElementById('form-submit').submit();
-            }
         </script>
     </body>
 </html>

@@ -11,6 +11,7 @@ const express = require('express'),
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
+app.use('/public', express.static(path.join(__dirname + '/resources/images')));
 app.set(express.static(path.join(__dirname + './views')));
 
 app.set('view engine', 'ejs');
@@ -30,7 +31,7 @@ app.get('/Upload', (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 })
 app.get('/Query', (req, res) => {
-	res.render('Query', {root: __dirname + '/views/'});
+	res.render('Query', {root: __dirname + '/views/', results: undefined});
 })
 app.get('/Logs', (req, res) => {
 	var logData = [];
@@ -102,7 +103,12 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) 
 			console.log('poi table has been updated. Carry on.');
 			res.render('Results', {root: __dirname + '/views/'});
 		});	 */
-		res.render('Query', {root: __dirname + '/views/'});
+	let result_images = [
+		'profile_pics/examples/razzy1.jpg',
+		'profile_pics/examples/razzy2.jpg',
+		'profile_pics/examples/razzy3.jpg',
+	];
+	res.render('Query', {root: __dirname + '/views/', results: result_images});
 });
 
 //pulls back the global var with ajax.
