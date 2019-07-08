@@ -83,7 +83,26 @@ app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) 
 });
 
 app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) => {
+	//When we get results, revisit this and uncomment/clean up.
+	/* 	var profs = req.body.profile;
 
+		//This will need to be set based on the results page form. need a way to pass in the uploaded profile.
+		//var curr_prof = req.body.current;
+		var curr_prof = 'SuT-eKa8qty';
+		profs.push(curr_prof)
+		let max = "";
+		let results = "";
+
+		//Calls the data.py script that populates the table.
+		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', profs]);
+
+		data.stderr.pipe(process.stderr);
+
+		data.on('exit', function(e){
+			console.log('poi table has been updated. Carry on.');
+			res.render('Results', {root: __dirname + '/views/'});
+		});	 */
+		res.render('Query', {root: __dirname + '/views/'});
 });
 
 //pulls back the global var with ajax.
