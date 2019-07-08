@@ -78,13 +78,11 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert(upload.PRISUpload));
-app.post('/submit-form', (req, res) => {
+app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert(upload.PRISQuery));
-app.post('/submit-query', (req, res) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) => {
 
 });
 

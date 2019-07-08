@@ -4,10 +4,11 @@ const JSONMarker = "Results JSON:";
 var formidable = require('formidable');
 var fs = require('fs');
 var logs = require('./logManager.js');
+var util = require('util');
 
 var process_spawner = require('child_process');
 
-exports.PRISQuery = function(res, req, logger, fName){
+exports.PRISQuery = function(req, res, logger, fName){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
@@ -21,7 +22,7 @@ exports.PRISQuery = function(res, req, logger, fName){
 			logger.success("Results received");
 			var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
 			res.set({'Content-Type':'application/json'});
-			res.send(jsonData);
+			res.json(jsonData);
 			res.end();
 		}
 		if(sdata.indexOf("PD:") != -1)
@@ -42,7 +43,7 @@ exports.PRISQuery = function(res, req, logger, fName){
 	});
 }
 
-exports.PRISUpload = function(res, req, logger, fName){
+exports.PRISUpload = function(req, res, logger, fName){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
@@ -73,8 +74,6 @@ exports.PRISUpload = function(res, req, logger, fName){
 //TODO(Nick): Finish using process function
 exports.uploadAndConvert = function(process){
 	return function(req, res, next){
-
-
 		var form = new formidable.IncomingForm();
 		form.multiples=true;
 		form.on('file',function(name, file){
@@ -102,7 +101,7 @@ exports.uploadAndConvert = function(process){
 
 						console.log(file.path+" deleted successfully");
 					});
-					process(res, req, logger, fName);
+					process(req, res, logger, fName);
 				});
 			}
 			else if(type=='image'){
@@ -119,7 +118,7 @@ exports.uploadAndConvert = function(process){
 
 						console.log(file.path+" deleted successfully");
 					});
-					process(res, req, logger, fName);
+					process(req, res, logger, fName);
 				});
 			}
 			else{

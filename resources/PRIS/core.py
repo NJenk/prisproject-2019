@@ -195,5 +195,4 @@ if(__name__=="__main__"):
                 fData = core.process_video(True,args.query_filename)
                 sys.stdout.flush()
                 print("Results JSON:")
-                print(json.dumps(fData,indent=4))
-                sys.stdout.flush()
+                print(json.dumps(fData,indent=4),flush=True)
