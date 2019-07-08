@@ -7,8 +7,8 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs');
-	
-    
+
+
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.set(express.static(path.join(__dirname + './views')));
@@ -37,9 +37,9 @@ app.get('/Logs', (req, res) => {
     var lineData = {};
     var lineReader = require('readline').createInterface({
 		// The path to the log file needs updated when we know it.
-        input: require('fs').createReadStream('resources\\logs\\testlog.txt')
+        input: require('fs').createReadStream('resources\\logs\\log.txt')
         });
-        
+
 
         lineReader.on('line', function (line) {
             var logline = line.split(' ');
@@ -78,28 +78,26 @@ app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert);
-app.post('/submit-form', (req, res) => {
+app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.use(upload.uploadAndConvert);
-app.post('/submit-query', (req, res) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) => {
 	//When we get results, revisit this and uncomment/clean up.
 	/* 	var profs = req.body.profile;
-		
+
 		//This will need to be set based on the results page form. need a way to pass in the uploaded profile.
 		//var curr_prof = req.body.current;
 		var curr_prof = 'SuT-eKa8qty';
 		profs.push(curr_prof)
 		let max = "";
 		let results = "";
-	
+
 		//Calls the data.py script that populates the table.
 		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', profs]);
-	
+
 		data.stderr.pipe(process.stderr);
-	
+
 		data.on('exit', function(e){
 			console.log('poi table has been updated. Carry on.');
 			res.render('Results', {root: __dirname + '/views/'});
