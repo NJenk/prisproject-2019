@@ -8,12 +8,13 @@ import json, traceback
 import sys
 import os
 import collections
+import time
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 class PersonReIdentificationSystemCore():
-        
+
         def __init__(self, reader):
                 self.reader = reader
                 self.person_detection = PersonDetectionModule("box")
@@ -21,9 +22,9 @@ class PersonReIdentificationSystemCore():
                 self.person_identification_url = 'http://127.0.0.1:8080/'
                 self.frames_processed = 0
                 self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) # 5fps for a 10s video
-                
-                self.frames_left = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) 
-        
+
+                self.frames_left = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
+
         def display(self, mode, count=0, condition=True, frame=None, fMatrix=None, box=None, label=[0, "1", "None", "None"]):
                 if(mode == 0):
                         #draw the box and the label on the frame
@@ -69,7 +70,7 @@ class PersonReIdentificationSystemCore():
                                 print()
 
                 return condition
-        
+
         def person_identification(self, fMatrix):
                 #this is a wrapper function for the person ID module - sends a feature matrix to the module then recieves a label
                 label = ["None", "None", "None"] #Format: [<status>, <label>, <simularity>]
@@ -85,21 +86,21 @@ class PersonReIdentificationSystemCore():
                         label[1] = resp.text
                         label[2] = None
                 return label
-        
+
         def person_identification_ranked(self, fMatrix):
                 #this is a wrapper function for the person ID module - sends a feature matrix to the module then recieves sorted results
                 resp = requests.post(self.person_identification_url+'query_ranked', data=json.dumps(fMatrix))
                 return json.loads(resp.text)
-        
+
         def process_video(self, query = False, file_name = ""):
                 print("Processing video...")
                 condition = True
-                
+
                 while(condition):
-                        
+
                         #STEP-01: Pull the frame
                         condition, frame = self.reader.read()
-                
+
                         if(condition):
                                 #resize the image
                                 window_height = 450
@@ -110,63 +111,64 @@ class PersonReIdentificationSystemCore():
 
                                 if(query):
                                         ret = {}
-                        
+
                                 #correct luminance in image
 
-                                
+
                                 #STEP-02: Detect human shaped objects in frame
                                 #Output format for person detection: [(Detection frame, bounding box), ...]
                                 detected_people = self.person_detection.process_frame_cpu(frame)
-                                
+
                                 if(len(detected_people) != 0 and len(detected_people[0][0]) > 100):
                                         self.display(2) #Comment out to disable matrix display
                                         count = 1
                                         for person in detected_people:
                                                 #STEP-02: Extract the feature matrix from the detected person.
                                                 matrix = self.feature_extraction.extract_features_sequential(person[0])
-                                                
+
                                                 #Display feature matrix to console
                                                 self.display(3, count=count, fMatrix=matrix) #Comment out to disable matrix display
-                                                
+
                                                 #STEP-03: Send the matrix to the Person Identification module
                                                 if(query):
                                                         cv2.imwrite("../images/query_data/"+file_name+str(count)+".jpg", person[0])
                                                         p_data = {}
                                                         p_data['image'] = file_name+str(count)+".jpg"
                                                         p_data['results'] = self.person_identification_ranked(matrix)
-                                                        
+
                                                 else:
                                                         label = self.person_identification(matrix)
 
                                                         #ADDED BY NICK: If it's new, spit out the image
                                                         if label[0]==1:
                                                                 cv2.imwrite("../images/profile_pics/"+str(label[1]).replace('"',"")+".jpg",person[0])
-                                                
+
                                                 #Display label to console
                                                 #self.display(5, label=[label[0], str(count), label[1], label[2]])
-                                                
+
                                                 #attach label to frame for image display - only needs to be uncommented when the image display is in use
                                                 #self.display(0, frame=frame, box=person[1], label=[label[0], str(count), label[1], label[2]])
                                                 if(query):
                                                         ret[str(count)]=p_data
                                                 count += 1
                                 self.display(4) #comment out to disable matrix display
-                                
+
                                 self.frames_processed += 1
                                 self.frames_left = self.total_frames - self.frames_processed
 
                                 self.percent_frames = self.frames_processed/self.total_frames
                                 self.percent_frames = self.percent_frames * 100
 
-                                print("curr frames: "+ str(self.frames_processed)) 
-                                print("total frames: "+ str(self.total_frames)) 
-                                
+                                print("curr frames: "+ str(self.frames_processed))
+                                print("total frames: "+ str(self.total_frames))
+
                                 print("PD:"+str(self.percent_frames+1)+"%")
                                 sys.stdout.flush()
+                                time.sleep(.1)
 
                                 #Display the output for the demo
                                 #condition = self.display(1, condition, frame=frame)
-                                
+
                                 if query:
                                         return ret
 
@@ -183,10 +185,10 @@ if(__name__=="__main__"):
         args = dict(zip(arg_names, sys.argv))
         AllArgs = collections.namedtuple('AllArgs', arg_names)
         args = AllArgs(*(args.get(arg, None) for arg in arg_names))
-        
+
 
         filename = args.filename
-        
+
         reader = cv2.VideoCapture(filename)
         core = PersonReIdentificationSystemCore(reader)
         if args.query_filename == None:
@@ -194,5 +196,7 @@ if(__name__=="__main__"):
         else:
                 fData = core.process_video(True,args.query_filename)
                 sys.stdout.flush()
+                time.sleep(.1)
                 print("Results JSON:")
                 print(json.dumps(fData,indent=4),flush=True)
+                time.sleep(.1)
