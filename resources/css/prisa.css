@@ -9,18 +9,20 @@ body {
     border-top: none;
     border-bottom: none;
     padding: 10px;
-    height: 100%;
+    /* Firefox */
+    height: -moz-calc(100% - 60px);
+    /* WebKit */
+    height: -webkit-calc(100% - 60px);
     background-color: lightgray;
     right: 0px;
-    left: 0px;
-    overflow: scroll;
+    left: 0px;    
+    overflow: scroll;    
 }
-/*.container p {padding: 10px;}*/
-
 .container ul {
     text-align: left;
 }
-
+.container::-webkit-scrollbar { width: 0 !important }
+.container { overflow: -moz-scrollbars-none; }
 .faq li{
     font-weight: bold;
 }
