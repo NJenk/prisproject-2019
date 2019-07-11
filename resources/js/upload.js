@@ -16,7 +16,7 @@ exports.PRISQuery = function(req, res, logger, fName){
 	});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
-		console.log("Data: "+data);
+		//console.log("Data: "+data);
 		sdata = data.toString();
 		if(sdata.startsWith(JSONMarker)){
 			logger.success("Results received");
@@ -51,7 +51,7 @@ exports.PRISUpload = function(req, res, logger, fName){
 	});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
-		console.log("Data: "+data);
+		//console.log("Data: "+data);
 		sdata = data.toString();
 		if(sdata.indexOf("PD:") != -1)
 		{
