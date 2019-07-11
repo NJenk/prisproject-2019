@@ -71,15 +71,20 @@ app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
 
+app.get('Results'), (req, res) => {
+	res.render('Results', {root: __dirname + '/views/'});
+}
+
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
+//Forms
 app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res, next) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), async (req, res, next) => {
 	//When we get results, revisit this and uncomment/clean up.
 	/* 	var profs = req.body.profile;
 
@@ -99,12 +104,11 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res, 
 			console.log('poi table has been updated. Carry on.');
 			res.render('Results', {root: __dirname + '/views/'});
 		});	 */
-	/* let result_images = [
-		'profile_pics/examples/razzy1.jpg',
-		'profile_pics/examples/razzy2.jpg',
-		'profile_pics/examples/razzy3.jpg',
-	]; */
-	//res.render('Query', {root: __dirname + '/views/', results: result_images});
+
+		const item = await upload.PRISQuery;
+		console.log(item);
+	 //let result_images = []; 
+	//res.render('Results', {root: __dirname + '/views/', results: result_images});
 });
 
 //pulls back the global var with ajax.

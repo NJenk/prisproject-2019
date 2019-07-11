@@ -23,7 +23,7 @@ exports.PRISQuery = async function(req, res, logger, fName){
 			var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
 			res.set({'Content-Type':'application/json'});
 			res.json(jsonData);
-			//res.end();
+			res.end();
 		}
 		if(sdata.indexOf("PD:") != -1)
 		{
