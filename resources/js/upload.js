@@ -8,7 +8,7 @@ var util = require('util');
 
 var process_spawner = require('child_process');
 
-exports.PRISQuery = async function(req, res, logger, fName){
+exports.PRISQuery = function(req, res, logger, fName){
 	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
@@ -16,7 +16,7 @@ exports.PRISQuery = async function(req, res, logger, fName){
 	});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
-		console.log("Data: "+data);
+		//console.log("Data: "+data);
 		sdata = data.toString();
 		if(sdata.startsWith(JSONMarker)){
 			logger.success("Results received");
@@ -51,7 +51,7 @@ exports.PRISUpload = function(req, res, logger, fName){
 	});
 	PRIS.stderr.pipe(process.stderr);
 	PRIS.stdout.on('data', (data) => {
-		console.log("Data: "+data);
+		//console.log("Data: "+data);
 		sdata = data.toString();
 		if(sdata.indexOf("PD:") != -1)
 		{

@@ -84,7 +84,8 @@ app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) 
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), async (req, res, next) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res, next) => {
+	//DEAD CODE
 	//When we get results, revisit this and uncomment/clean up.
 	/* 	var profs = req.body.profile;
 
@@ -105,9 +106,9 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), async (req,
 			res.render('Results', {root: __dirname + '/views/'});
 		});	 */
 
-		const item = await upload.PRISQuery;
-		console.log(item);
-	 //let result_images = []; 
+		//const item = await upload.PRISQuery;
+		//console.log(item);
+	 //let result_images = [];
 	//res.render('Results', {root: __dirname + '/views/', results: result_images});
 });
 
