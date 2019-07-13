@@ -83,11 +83,11 @@ app.get('/Popup', (req, res) => {
 });
 
 //Forms
-app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
+app.post('/submit-form', upload.uploadAndConvert(upload.PRIS(false)), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res, next) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res, next) => {
 	//DEAD CODE
 	//When we get results, revisit this and uncomment/clean up.
 	/* 	var profs = req.body.profile;
