@@ -192,7 +192,6 @@ if(__name__=="__main__"):
         # Parse out temp and original names
         original_name = args.filename[args.filename.index('.') + 1:]
         original_name = original_name[:original_name.rfind('.avi')]
-
  
         temp_name = args.filename[args.filename.rfind('\\') +1:]
         temp_name = temp_name[:temp_name.index('.')]

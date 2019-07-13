@@ -59,35 +59,34 @@ exports.PRISUpload = function(req, res, logger, fName){
 		sdata = data.toString();
 		if(sdata.startsWith(ProgressJSON))
 		{
-				//updates the global progress var. We might want to do some adding to the thing here, instead of just setting =
-				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
-				var user_id = Object.keys(prog_obj)[0];
+			//updates the global progress var. 
+			var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
+			var user_id = Object.keys(prog_obj)[0];
 
-				//determines if we need to add to the progress structure or not.
-				if(!(user_id in req.app.locals.progress))
+			//determines if we need to add to the progress structure or not.
+			if(!(user_id in req.app.locals.progress))
+			{
+				//The key doesn't exist, so we have to add it and then add the value.
+				req.app.locals.progress[user_id] = [prog_obj[user_id]];
+			}
+			else
+			{
+				
+				//Check to see if this temp already exists. If it does, update current only. Otherwise add it.
+				if(req.app.locals.progress[user_id].some(el => el.temp_name === prog_obj[user_id].temp_name))
 				{
-					//The key doesn't exist, so we have to add it and then add the value.
-					req.app.locals.progress[user_id] = [prog_obj[user_id]];
+					//Gets the index of this particular temp ID so we can update it.
+					const index = req.app.locals.progress[user_id].findIndex(item => item.temp_name === prog_obj[user_id].temp_name);
+					
+					//update the progress.
+					req.app.locals.progress[user_id][index] = prog_obj[user_id];
 				}
 				else
 				{
-					
-					//Check to see if this temp already exists. If it does, update current only. Otherwise add it.
-					if(req.app.locals.progress[user_id].some(el => el.temp_name === prog_obj[user_id].temp_name))
-					{
-						//Gets the index of this particular temp ID so we can update it.
-						const index = req.app.locals.progress[user_id].findIndex(item => item.temp_name === prog_obj[user_id].temp_name);
-						
-						//else update the progress.
-						req.app.locals.progress[user_id][index] = prog_obj[user_id];
-						
-					}
-					else
-					{
-						//The temp_name isn't in this users progress, so we need to add this.
-						req.app.locals.progress[user_id].push(prog_obj[user_id])
-					}
+					//The temp_name isn't in this users progress, so we need to add this.
+					req.app.locals.progress[user_id].push(prog_obj[user_id])
 				}
+			}
 		}
 	});
 	PRIS.on('exit', function(e){
@@ -117,7 +116,7 @@ exports.uploadAndConvert = function(process){
 				fName+=Math.round(Math.random()*9);
 			}
 
-			//need the original name to go through as well for progress tracking. Might have to do different things depending on if vid or image.
+			//need the original name to go through as well for progress tracking.
 			fName = fName+'.'+file.name;
 
 			var type = file.type.substring(0,5);
