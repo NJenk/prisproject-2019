@@ -21,8 +21,13 @@ body {
 .container ul {
     text-align: left;
 }
-.container::-webkit-scrollbar { width: 0 !important }
-.container { overflow: -moz-scrollbars-none; }
+.container::-webkit-scrollbar { 
+    width: 0 !important 
+}
+.container { 
+    overflow: -moz-scrollbars-none; 
+}
+
 .faq li{
     font-weight: bold;
 }
