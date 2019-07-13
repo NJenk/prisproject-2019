@@ -1,5 +1,6 @@
 const pathToPRIS = process.cwd()+'\\resources\\PRIS\\';
 const JSONMarker = "Results JSON:";
+const ProgressJSON = "Progress JSON:";
 
 var formidable = require('formidable');
 var fs = require('fs');
@@ -9,7 +10,7 @@ var util = require('util');
 var process_spawner = require('child_process');
 
 exports.PRISQuery = function(req, res, logger, fName){
-	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
+	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName, req.cookies['id']],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
 		logger.danger("Processing FAILED");
@@ -25,10 +26,11 @@ exports.PRISQuery = function(req, res, logger, fName){
 			res.json(jsonData);
 			res.end();
 		}
-		if(sdata.indexOf("PD:") != -1)
+		if(sdata.startsWith(ProgressJSON))
 		{
-				//updates the global progress var.
-				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
+				//Remove this if we don't need it before the end of the project.
+				//Don't think we need a progress bar for query yet, since its only images. 
+				//req.app.locals.progress.push(JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length)));
 		}
 	});
 	PRIS.on('exit', function(e){
@@ -44,7 +46,9 @@ exports.PRISQuery = function(req, res, logger, fName){
 }
 
 exports.PRISUpload = function(req, res, logger, fName){
-	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
+	req.app.locals.progress = {};
+
+	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi", "", req.cookies['id']],{cwd:pathToPRIS});
 	PRIS.stderr.on('data', (data)=>{
 		//logger.error(data.toString());
 		logger.danger("Processing FAILED");
@@ -53,10 +57,37 @@ exports.PRISUpload = function(req, res, logger, fName){
 	PRIS.stdout.on('data', (data) => {
 		//console.log("Data: "+data);
 		sdata = data.toString();
-		if(sdata.indexOf("PD:") != -1)
+		if(sdata.startsWith(ProgressJSON))
 		{
-				//updates the global progress var.
-				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
+				//updates the global progress var. We might want to do some adding to the thing here, instead of just setting =
+				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
+				var user_id = Object.keys(prog_obj)[0];
+
+				//determines if we need to add to the progress structure or not.
+				if(!(user_id in req.app.locals.progress))
+				{
+					//The key doesn't exist, so we have to add it and then add the value.
+					req.app.locals.progress[user_id] = [prog_obj[user_id]];
+				}
+				else
+				{
+					
+					//Check to see if this temp already exists. If it does, update current only. Otherwise add it.
+					if(req.app.locals.progress[user_id].some(el => el.temp_name === prog_obj[user_id].temp_name))
+					{
+						//Gets the index of this particular temp ID so we can update it.
+						const index = req.app.locals.progress[user_id].findIndex(item => item.temp_name === prog_obj[user_id].temp_name);
+						
+						//else update the progress.
+						req.app.locals.progress[user_id][index] = prog_obj[user_id];
+						
+					}
+					else
+					{
+						//The temp_name isn't in this users progress, so we need to add this.
+						req.app.locals.progress[user_id].push(prog_obj[user_id])
+					}
+				}
 		}
 	});
 	PRIS.on('exit', function(e){
@@ -85,6 +116,9 @@ exports.uploadAndConvert = function(process){
 			for(var i = 0; i < len; i++){
 				fName+=Math.round(Math.random()*9);
 			}
+
+			//need the original name to go through as well for progress tracking. Might have to do different things depending on if vid or image.
+			fName = fName+'.'+file.name;
 
 			var type = file.type.substring(0,5);
 			if(type=='video'){
