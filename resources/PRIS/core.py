@@ -190,8 +190,7 @@ if(__name__=="__main__"):
         reader = cv2.VideoCapture(filename)
 
         # Parse out temp and original names
-        original_name = args.filename[args.filename.index('.') + 1:]
-        original_name = original_name[:original_name.rfind('.avi')]
+        original_name = args.query_filename
 
         temp_name = args.filename[args.filename.rfind('\\') +1:]
         temp_name = temp_name[:temp_name.index('.')]

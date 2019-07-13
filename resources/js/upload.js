@@ -11,6 +11,7 @@ var process_spawner = require('child_process');
 
 exports.PRIS = function(query){
 	return function(req, res, logger, fName){
+		req.app.locals.progress = {};
 		var args =  [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"];
 		if(query){
 			args.push(fName);
@@ -35,7 +36,7 @@ exports.PRIS = function(query){
 				res.json(jsonData);
 				res.end();
 			}
-			if(sdata.startsWith(ProgressJSON))
+			else if(sdata.startsWith(ProgressJSON))
 			{
 				//updates the global progress var.
 				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
@@ -93,9 +94,6 @@ exports.uploadAndConvert = function(process){
 			for(var i = 0; i < len; i++){
 				fName+=Math.round(Math.random()*9);
 			}
-
-			//need the original name to go through as well for progress tracking.
-			fName = fName+'.'+file.name;
 
 			var type = file.type.substring(0,5);
 			if(type=='video'){
