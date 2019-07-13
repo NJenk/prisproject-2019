@@ -1,5 +1,6 @@
 const pathToPRIS = process.cwd()+'\\resources\\PRIS\\';
 const JSONMarker = "Results JSON:";
+const ProgressJSON = "Progress JSON:";
 
 var formidable = require('formidable');
 var fs = require('fs');
@@ -62,6 +63,9 @@ exports.uploadAndConvert = function(process){
 			for(var i = 0; i < len; i++){
 				fName+=Math.round(Math.random()*9);
 			}
+
+			//need the original name to go through as well for progress tracking.
+			fName = fName+'.'+file.name;
 
 			var type = file.type.substring(0,5);
 			if(type=='video'){

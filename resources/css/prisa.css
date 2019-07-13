@@ -21,8 +21,13 @@ body {
 .container ul {
     text-align: left;
 }
-.container::-webkit-scrollbar { width: 0 !important }
-.container { overflow: -moz-scrollbars-none; }
+.container::-webkit-scrollbar { 
+    width: 0 !important 
+}
+.container { 
+    overflow: -moz-scrollbars-none; 
+}
+
 .faq li{
     font-weight: bold;
 }
@@ -60,10 +65,6 @@ footer {
     bottom: 0;
     left: 0;
     padding: .25em;
-}
-#pb {
-    width: 0%;
-    background-color: limegreen
 }
 .progress{
     margin: 10px;

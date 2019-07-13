@@ -7,19 +7,22 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs'),
+	cookieParser = require('cookie-parser'),
 	async = require("async");
 
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.use('/public', express.static(path.join(__dirname + '/resources/images')));
+app.use(cookieParser());
+
 app.set(express.static(path.join(__dirname + './views')));
 
 app.set('view engine', 'ejs');
 var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
-app.locals.progress = "0";
+app.locals.progress = [];
 
 app.use(express.static(path.join(__dirname + '/resources/css')));
 app.set(express.static(path.join(__dirname + 'views')));
