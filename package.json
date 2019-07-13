@@ -2,8 +2,8 @@
   "name": "gui",
   "version": "1.0.0",
   "description": "GUI for PRISA",
-  "nodemonConfig":{
-    "ignore":[
+  "nodemonConfig": {
+    "ignore": [
       "*.json"
     ]
   },
