@@ -21,7 +21,7 @@ class PersonReIdentificationSystemCore():
                 self.feature_extraction = FeatureExtractionModule()
                 self.person_identification_url = 'http://127.0.0.1:8080/'
                 self.progressData = {}
-                self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) 
+                self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
                 self.frames_left = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
                 self.user_id = user_id
 
@@ -192,13 +192,13 @@ if(__name__=="__main__"):
         # Parse out temp and original names
         original_name = args.filename[args.filename.index('.') + 1:]
         original_name = original_name[:original_name.rfind('.avi')]
- 
+
         temp_name = args.filename[args.filename.rfind('\\') +1:]
         temp_name = temp_name[:temp_name.index('.')]
 
         core = PersonReIdentificationSystemCore(reader, args.user_id, temp_name, original_name)
 
-        if not args.query_filename:
+        if args.user_id:
                 core.process_video()
         else:
                 fData = core.process_video(True,args.query_filename)

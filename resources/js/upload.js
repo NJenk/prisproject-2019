@@ -15,6 +15,10 @@ exports.PRIS = function(query){
 		if(query){
 			args.push(fName);
 		}
+		else{
+			args.push(logger.filename);
+			args.push(req.cookies['id']);
+		}
 		var PRIS = process_spawner.spawn('python', args, {cwd:pathToPRIS});
 		PRIS.stderr.on('data', (data)=>{
 			//logger.error(data.toString());
@@ -31,10 +35,36 @@ exports.PRIS = function(query){
 				res.json(jsonData);
 				res.end();
 			}
-			if(sdata.indexOf("PD:") != -1)
+			if(sdata.startsWith(ProgressJSON))
 			{
-					//updates the global progress var.
-					req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
+				//updates the global progress var.
+				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
+				var user_id = Object.keys(prog_obj)[0];
+
+				//determines if we need to add to the progress structure or not.
+				if(!(user_id in req.app.locals.progress))
+				{
+					//The key doesn't exist, so we have to add it and then add the value.
+					req.app.locals.progress[user_id] = [prog_obj[user_id]];
+				}
+				else
+				{
+
+					//Check to see if this temp already exists. If it does, update current only. Otherwise add it.
+					if(req.app.locals.progress[user_id].some(el => el.temp_name === prog_obj[user_id].temp_name))
+					{
+						//Gets the index of this particular temp ID so we can update it.
+						const index = req.app.locals.progress[user_id].findIndex(item => item.temp_name === prog_obj[user_id].temp_name);
+
+						//update the progress.
+						req.app.locals.progress[user_id][index] = prog_obj[user_id];
+					}
+					else
+					{
+						//The temp_name isn't in this users progress, so we need to add this.
+						req.app.locals.progress[user_id].push(prog_obj[user_id])
+					}
+				}
 			}
 		});
 		PRIS.on('exit', function(e){
