@@ -22,10 +22,6 @@
                     </div>
                 </form>
 
-                <div class="progress">
-                    <div id="pb" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            
             <% } else { %>
                 <% for(var i=0; i < results.length; i++) { %>
                     <img src="public/<%= results[i] %>">
@@ -35,17 +31,28 @@
         </div>
 
         <%include Footer.ejs %>
-        </div>   
+        </div>
         <script>
             $(function() {
                 var // Define maximum number of files.
                     max_file_number = 1,
                     // Define your form id or class or just tag.
-                    $form = $('form'),
+                    $form = $('#form-submit'),
                     // Define your upload field class or id or tag.
                     $file_upload = $('#upload', $form),
                     // Define your submit class or id or tag.
                     $button = $('.submit', $form);
+
+                $form.submit((e)=>{
+                  e.preventDefault();
+                  var data = new FormData($form[0]);
+                  var xhr = new XMLHttpRequest();
+                  xhr.open('POST','/submit-query',true);
+                  xhr.send(data);
+                  xhr.onload = ()=>{
+                    console.log(xhr.response);
+                  }
+                });
 
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');

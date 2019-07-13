@@ -6,19 +6,23 @@ const express = require('express'),
 	path = require('path'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
-	fs = require('fs');
+	fs = require('fs'),
+	cookieParser = require('cookie-parser'),
+	async = require("async");
 
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.use('/public', express.static(path.join(__dirname + '/resources/images')));
+app.use(cookieParser());
+
 app.set(express.static(path.join(__dirname + './views')));
 
 app.set('view engine', 'ejs');
 var process_spawner = require('child_process');
 
 //this works as a global var for progress bar.
-app.locals.progress = "0";
+app.locals.progress = [];
 
 app.use(express.static(path.join(__dirname + '/resources/css')));
 app.set(express.static(path.join(__dirname + 'views')));
@@ -70,20 +74,21 @@ app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
 
-//Checking result view
-app.get('/Results', (req, res) => {
+app.get('Results'), (req, res) => {
 	res.render('Results', {root: __dirname + '/views/'});
-});
+}
 
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 
+//Forms
 app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) => {
+app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res, next) => {
+	//DEAD CODE
 	//When we get results, revisit this and uncomment/clean up.
 	/* 	var profs = req.body.profile;
 
@@ -103,12 +108,11 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) 
 			console.log('poi table has been updated. Carry on.');
 			res.render('Results', {root: __dirname + '/views/'});
 		});	 */
-	let result_images = [
-		'profile_pics/examples/razzy1.jpg',
-		'profile_pics/examples/razzy2.jpg',
-		'profile_pics/examples/razzy3.jpg',
-	];
-	res.render('Query', {root: __dirname + '/views/', results: result_images});
+
+		//const item = await upload.PRISQuery;
+		//console.log(item);
+	 //let result_images = [];
+	//res.render('Results', {root: __dirname + '/views/', results: result_images});
 });
 
 //pulls back the global var with ajax.
