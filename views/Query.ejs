@@ -6,8 +6,8 @@
     </head>
     <body>
         <%include navbar.ejs %>
+
         <div class="container">
-            <% if(results === undefined) { %>
                 <form action="submit-query" id="form-submit" method="post" enctype="multipart/form-data">
                     <!--New Upload Bar-->
                     <div class="input-group">
@@ -22,13 +22,20 @@
                     </div>
                 </form>
 
-            <% } else { %>
-                <% for(var i=0; i < results.length; i++) { %>
-                    <img src="public/<%= results[i] %>">
-                <% } %>
-            <% } %>
+                    <div id="imageHolder"></div>
 
+                    <div id="label1">
+                        <p></p>
+                    </div>
+                    <div id="label2">
+                        <p></p>
+                    </div>
+                    <div id="label3">
+                        <p></p>
+                    </div>      
         </div>
+
+        
 
         <%include Footer.ejs %>
         </div>
@@ -44,15 +51,48 @@
                     $button = $('.submit', $form);
 
                 $form.submit((e)=>{
-                  e.preventDefault();
-                  var data = new FormData($form[0]);
-                  var xhr = new XMLHttpRequest();
-                  xhr.open('POST','/submit-query',true);
-                  xhr.send(data);
-                  xhr.onload = ()=>{
-                    console.log(xhr.response);
+                    e.preventDefault();
+                    var data = new FormData($form[0]);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST','/submit-query',true);
+                    xhr.send(data);
+                
+                    xhr.onload = ()=>{
+                        console.log(xhr.response);
+                        //Checking parse
+                        var PRISdata = JSON.parse(xhr.responseText);
+                        console.log(PRISdata["1"].image);
+                        console.log(PRISdata["1"].results[0].label);
+                        console.log(PRISdata["1"].results[0].percent.toFixed(1));
+                        
+                        //Creating layout
+                        $(document).ready(function(){
+                            //For Uploaded image
+                            $("#imageHolder").html(PRISdata["1"].image);
+                            $.ajax({
+                                type: "POST",
+                                url: "resources/images/query_data",
+                                success: function(response) {
+                                    $("#image").attr("src", "data:image/png;base64");
+                                    }
+                                });
+                           
+                            //Change into forEach loop eventually
+                            //The div labels ID change into the filename (Paul requested that)
+                            $("#label1 p").html(PRISdata["1"].results[0].percent.toFixed(1));
+                            $("#label1").attr("id",PRISdata["1"].results[0].label); 
+                            $("#label2 p").html(PRISdata["1"].results[1].percent.toFixed(1));
+                            $("#label2").attr("id",PRISdata["1"].results[1].label); 
+                            $("#label3 p").html(PRISdata["1"].results[2].percent.toFixed(1));
+                            $("#label3").attr("id",PRISdata["1"].results[2].label); 
+                        })
+                        
                   }
-                });
+                  
+            });
+
+                
+                    
 
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
