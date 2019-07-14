@@ -14,6 +14,7 @@ function LoadImg(filename) {
     xmlhttp.send(null);
 }
 //I can't check the code, but incase the top doesn't work I think this bottom code will.
+//I just don't know where exactly we are storing the images. That location needs to be added instead of the placeholders
 //The bottom code is another possible way to do it and it should produce something like a table for the POIs
 //We can change the names to the poi id number or whatever, but I think we could make a table to display the images
 
