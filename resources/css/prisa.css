@@ -1,7 +1,7 @@
 body {
     background-color:teal;
 }
-
+/* The main background for the page containing all inner text and images. */
 .container {
     border: .2em solid black;
     position: fixed;
@@ -16,7 +16,8 @@ body {
     background-color: lightgray;
     right: 0px;
     left: 0px;    
-    overflow: scroll;    
+    overflow: scroll; 
+    overflow: -moz-scrollbars-none;    
 }
 .container ul {
     text-align: left;
@@ -24,18 +25,16 @@ body {
 .container::-webkit-scrollbar { 
     width: 0 !important 
 }
-.container { 
-    overflow: -moz-scrollbars-none; 
-}
 
 .faq li{
     font-weight: bold;
 }
-
+.about-inner-unordered-list li{
+    font-weight: normal !important
+}
 p{
     text-align: justify;
 }
-
 .p-2 {
     text-align: left;
 }
