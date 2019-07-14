@@ -13,4 +13,35 @@ function LoadImg(filename) {
     xmlhttp.open("GET", 'load.php?LoadImg='+filename );
     xmlhttp.send(null);
 }
-//I haven't been able to test this but I believe it'll work if they have the id number assigned to the profile
+//I can't check the code, but incase the top doesn't work I think this bottom code will.
+//The bottom code is another possible way to do it and it should produce something like a table for the POIs
+//We can change the names to the poi id number or whatever, but I think we could make a table to display the images
+
+//function createNode(element) {
+ //   return document.createElement(element);
+//}
+
+//function append(parent, el) {
+//  return parent.appendChild(el);
+//}
+
+//const ul = document.getElementById('poi');
+//const url = 'https://randomuser.me/api/?results=10';
+//fetch(url) 
+//.then((resp) => resp.json()) //transform the data into json
+//.then(function(data) { //create and apend the li's to the ul
+//  let poi = data.results;
+//  return poi.map(function(author) {
+//    let li = createNode('li'),
+//       img = createNode('img'),
+//       span = createNode('span');
+//    img.src = apoi.picture.medium;
+//    span.innerHTML = `${poi.name.first} ${poi.name.last}`;
+//    append(li, img);
+//    append(li, span);
+//    append(ul, li);
+//  })
+//})
+//.catch(function(error) {
+//  console.log(error);
+//});   
