@@ -23,6 +23,7 @@
                 </form>
 
                     <div id="imageHolder"></div>
+
                     <div id="label1">
                         <p></p>
                     </div>
@@ -63,11 +64,14 @@
                         console.log(PRISdata["1"].image);
                         console.log(PRISdata["1"].results[0].label);
                         console.log(PRISdata["1"].results[0].percent.toFixed(1));
-
+                        
                         //Creating layout
                         $(document).ready(function(){
+                            //For Uploaded image
                             $("#imageHolder").html(PRISdata["1"].image);
-                            
+                           
+                            //Change into forEach loop eventually
+                            //The div labels ID change into the filename (Paul requested that)
                             $("#label1 p").html(PRISdata["1"].results[0].percent.toFixed(1));
                             $("#label1").attr("id",PRISdata["1"].results[0].label); 
                             $("#label2 p").html(PRISdata["1"].results[1].percent.toFixed(1));
