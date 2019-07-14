@@ -6,8 +6,8 @@
     </head>
     <body>
         <%include navbar.ejs %>
+
         <div class="container">
-            <% if(results === undefined) { %>
                 <form action="submit-query" id="form-submit" method="post" enctype="multipart/form-data">
                     <!--New Upload Bar-->
                     <div class="input-group">
@@ -22,13 +22,12 @@
                     </div>
                 </form>
 
-            <% } else { %>
-                <% for(var i=0; i < results.length; i++) { %>
-                    <img src="public/<%= results[i] %>">
-                <% } %>
-            <% } %>
-
+                    <p id="imageHolder"></p>
+                    <p id="label"></p>
+                    <p id="percent"></p>
         </div>
+
+        
 
         <%include Footer.ejs %>
         </div>
@@ -44,15 +43,41 @@
                     $button = $('.submit', $form);
 
                 $form.submit((e)=>{
-                  e.preventDefault();
-                  var data = new FormData($form[0]);
-                  var xhr = new XMLHttpRequest();
-                  xhr.open('POST','/submit-query',true);
-                  xhr.send(data);
-                  xhr.onload = ()=>{
-                    console.log(xhr.response);
+                    e.preventDefault();
+                    var data = new FormData($form[0]);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST','/submit-query',true);
+                    xhr.send(data);
+                
+                    xhr.onload = ()=>{
+                        console.log(xhr.response);
+                        //Checking parse
+                        var PRISdata = JSON.parse(xhr.responseText);
+                        console.log(PRISdata["1"].image);
+                        console.log(PRISdata["1"].results[0].label);
+                        console.log(PRISdata["1"].results[0].percent.toFixed(1));
+
+                        //Creating layout
+                        var i,j, x = " ", y = " ";
+
+                        for (var i in PRISdata["1"].results) {
+                           x += PRISdata["1"].results[i].label;
+                        }
+
+                        for (var j in PRISdata["1"].results) {
+                            y +=  PRISdata["1"].results[j].percent.toFixed(1);
+                        }
+
+                        document.getElementById("imageHolder").innerHTML = PRISdata["1"].image;
+                        document.getElementById("label").innerHTML = x;
+                        document.getElementById("percent").innerHTML = y;
+                        
                   }
-                });
+                  
+            });
+
+                
+                    
 
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');

@@ -7,8 +7,7 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs'),
-	cookieParser = require('cookie-parser'),
-	async = require("async");
+	cookieParser = require('cookie-parser');
 
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
@@ -73,10 +72,6 @@ app.get('/FAQ', (req, res) => {
 app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
-
-app.get('Results'), (req, res) => {
-	res.render('Results', {root: __dirname + '/views/'});
-}
 
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
