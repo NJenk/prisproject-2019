@@ -10,9 +10,9 @@ body {
     border-bottom: none;
     padding: 10px;
     /* Firefox */
-    height: -moz-calc(100% - 60px);
+    height: -moz-calc(100% - 70px);
     /* WebKit */
-    height: -webkit-calc(100% - 60px);
+    height: -webkit-calc(100% - 70px);
     background-color: lightgray;
     right: 0px;
     left: 0px;    
@@ -67,6 +67,10 @@ footer {
 }
 .progress{
     margin: 10px;
+    height:35px;
+}
+.progress-bar {    
+    background-color: #0017ff;
 }
 /*.progress:not([value]) {display: none;}*/
 
@@ -76,10 +80,13 @@ footer {
     -webkit-linear-gradient(-45deg, transparent 33%, rgba(0, 0, 0, .1) 33%, rgba(0,0, 0, .1)        66%, transparent 66%),
     -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)),
     -webkit-linear-gradient(left, yellow, green );
-    height: 35px;
+    height: 40px;
     border-radius: 2px; 
     background-size: 35px 20px, 100% 100%, 100% 100%;
 }
+.progress-bar-33{background-color: red;}
+.progress-bar-67{background-color: yellow;}
+.progress-bar-100{background-color: blue;}
 .input-group-prepend {
     cursor: context-menu;
 }
