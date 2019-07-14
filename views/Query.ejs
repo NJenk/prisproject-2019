@@ -69,6 +69,13 @@
                         $(document).ready(function(){
                             //For Uploaded image
                             $("#imageHolder").html(PRISdata["1"].image);
+                            $.ajax({
+                                type: "POST",
+                                url: "resources/images/query_data",
+                                success: function(response) {
+                                    $("#image").attr("src", "data:image/png;base64");
+                                    }
+                                });
                            
                             //Change into forEach loop eventually
                             //The div labels ID change into the filename (Paul requested that)
