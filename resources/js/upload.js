@@ -30,8 +30,9 @@ exports.PRIS = function(query){
 			//console.log("Data: "+data);
 			sdata = data.toString();
 			if(sdata.startsWith(JSONMarker)){
-				logger.success("Results received");
 				var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
+				if(jsonData===null) logger.danger("Person identification not run or no person found");
+				else logger.success("Results received");
 				res.set({'Content-Type':'application/json'});
 				res.json(jsonData);
 				res.end();
@@ -96,33 +97,12 @@ exports.uploadAndConvert = function(process){
 			}
 
 			var type = file.type.substring(0,5);
+			var args = [];
 			if(type=='video'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					deleteFile(file.path, ()=>{
-							logger.success("Conversion successful");
-							console.log(file.path+" deleted successfully");
-						},
-						()=>{
-							logger.danger("tmp NOT DELETED");
-						}
-					);
-					process(req, res, logger, fName);
-				});
+				args = ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi'];
 			}
 			else if(type=='image'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					deleteFile(file.path, ()=>{
-							logger.success("Conversion successful");
-							console.log(file.path+" deleted successfully");
-						},
-						()=>{
-							logger.danger("tmp NOT DELETED");
-						}
-					);
-					process(req, res, logger, fName);
-				});
+				args = ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi'];
 			}
 			else{
 				deleteFile(file.path, ()=>{
@@ -133,7 +113,20 @@ exports.uploadAndConvert = function(process){
 						logger.danger("tmp NOT DELETED");
 					}
 				);
+				next();
 			}
+			var ffmpeg = process_spawner.spawn('resources/ffmpeg', args);
+			ffmpeg.on('close',function(e){
+				deleteFile(file.path, ()=>{
+						logger.success("Conversion successful");
+						console.log(file.path+" deleted successfully");
+					},
+					()=>{
+						logger.danger("tmp NOT DELETED");
+					}
+				);
+				process(req, res, logger, fName);
+			});
 		});
 		form.on('end', function(){
 			next();
