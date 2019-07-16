@@ -21,21 +21,27 @@
                         </div>
                     </div>
                 </form>
-
-                    <div id="imageHolder"></div>
-
-                    <div id="label1">
-                        <p></p>
+                <form method="post" enctype="multipart/form-data" action="/submit_similar">
+                    
+                    <div class="imgHolder" id="imageUploaded">
+                        <p id="puploaded"></p>
                     </div>
-                    <div id="label2">
-                        <p></p>
+
+                    <div class="imgHolder" id="imageHolder0">
+                        <p id="psimilar_0"></p>
+                        <input class="hidden" id="similar_0" name="similar_0" type="checkbox" />
                     </div>
-                    <div id="label3">
-                        <p></p>
-                    </div>      
+                    <div class="imgHolder" id="imageHolder1">
+                            <p id="psimilar_1"></p>
+                            <input class="hidden" id="similar_1" name="similar_1" type="checkbox" />
+                    </div>
+                    <div class="imgHolder" id="imageHolder2">
+                            <p id="psimilar_2"></p>
+                            <input class="hidden" id="similar_2" name="similar_2" type="checkbox" />
+                    </div>
+                    <input type="submit" id="similar_submit" class="hidden" />
+                </form>
         </div>
-
-        
 
         <%include Footer.ejs %>
         </div>
@@ -64,29 +70,73 @@
                         console.log(PRISdata["1"].image);
                         console.log(PRISdata["1"].results[0].label);
                         console.log(PRISdata["1"].results[0].percent.toFixed(1));
-                        
-                        //Creating layout
-                        $(document).ready(function(){
-                            //For Uploaded image
-                            $("#imageHolder").html(PRISdata["1"].image);
-                            $.ajax({
-                                type: "POST",
-                                url: "resources/images/query_data",
-                                success: function(response) {
-                                    $("#image").attr("src", "data:image/png;base64");
-                                    }
-                                });
-                           
-                            //Change into forEach loop eventually
-                            //The div labels ID change into the filename (Paul requested that)
-                            $("#label1 p").html(PRISdata["1"].results[0].percent.toFixed(1));
-                            $("#label1").attr("id",PRISdata["1"].results[0].label); 
-                            $("#label2 p").html(PRISdata["1"].results[1].percent.toFixed(1));
-                            $("#label2").attr("id",PRISdata["1"].results[1].label); 
-                            $("#label3 p").html(PRISdata["1"].results[2].percent.toFixed(1));
-                            $("#label3").attr("id",PRISdata["1"].results[2].label); 
-                        })
-                        
+
+                        //Start: Paul Brackett
+                        var image_original = document.querySelector('#imageUploaded');
+
+                        var image_element = document.createElement("img");
+                        image_element.src = 'public\\query_data\\' + PRISdata["1"].image;
+
+                        image_original.appendChild(image_element);
+
+                        var p_uploaded = document.querySelector('#puploaded');
+                            p_uploaded.innerHTML = "The image you uploaded";
+
+                        if(PRISdata["1"].results[0].label !== undefined)
+                        {
+                            var outer_div = document.querySelector('#imageHolder0');
+                            var image_element = document.createElement("img");
+                            image_element.src = 'public\\profile_pics\\' + PRISdata["1"].results[0].label + ".jpg";
+
+                            var check_box = document.querySelector('#similar_0');
+
+                            //outer_div.innerHTML = Math.round(PRISdata["1"].results[0].percent);
+                            outer_div.appendChild(image_element);
+                            check_box.classList.remove('hidden');
+                            check_box.setAttribute('value', PRISdata["1"].results[0].label);
+
+                           // var original_prof = document.querySelector("#original_profile");
+                            check_box.setAttribute('value', PRISdata["1"].results[0].label);
+                            var p_similar = document.querySelector('#psimilar_0');
+                            p_similar.innerHTML = "Percent Similar: " + Math.round(PRISdata["1"].results[0].percent);
+                        }
+
+                        if(PRISdata["1"].results[1].label !== undefined)
+                        {
+                            var outer_div = document.querySelector('#imageHolder1');
+                            var image_element = document.createElement("img");
+                            image_element.src = 'public\\profile_pics\\' + PRISdata["1"].results[1].label + ".jpg";
+
+                            //outer_div.innerHTML = Math.round(PRISdata["1"].results[1].percent);
+                            outer_div.appendChild(image_element);
+                            var check_box = document.querySelector('#similar_1');
+                            check_box.classList.remove("hidden");
+                            check_box.setAttribute('value', PRISdata["1"].results[1].label);
+                            var p_similar = document.querySelector('#psimilar_1');
+                            p_similar.innerHTML = "Percent Similar: " + Math.round(PRISdata["1"].results[1].percent);
+
+                        }
+
+                        if(PRISdata["1"].results[2].label !== undefined)
+                        {
+                            var outer_div = document.querySelector('#imageHolder2');
+                            var image_element = document.createElement("img");
+                            image_element.src = 'public\\profile_pics\\' + PRISdata["1"].results[2].label + ".jpg";
+
+                            //outer_div.innerHTML = Math.round(PRISdata["1"].results[2].percent);
+                            outer_div.appendChild(image_element);
+
+                            var check_box = document.querySelector('#similar_2');
+                            check_box.classList.remove("hidden");
+                            check_box.setAttribute('value', PRISdata["1"].results[2].label);
+
+                            var p_similar = document.querySelector('#psimilar_2');
+                            p_similar.innerHTML = "Percent Similar: " + Math.round(PRISdata["1"].results[2].percent);
+                        }
+
+                        var submit_button = document.querySelector('#similar_submit');
+                        submit_button.classList.remove('hidden');
+                         //Start: Paul Brackett
                   }
                   
             });
