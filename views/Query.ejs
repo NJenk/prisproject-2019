@@ -8,39 +8,40 @@
         <%include navbar.ejs %>
 
         <div class="container">
-                <form action="submit-query" id="form-submit" method="post" enctype="multipart/form-data">
-                    <!--New Upload Bar-->
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <input type="submit" class="input-group-text submit" value="Upload"/>
-                        </div>
-                        <div class="custom-file">
-                            <input type="file" name= "input" class="custom-file-input" id="upload"
-                            aria-describedby="inputGroupFileAddon01" accept=".jpg">
-                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
-                        </div>
+            <form action="submit-query" id="form-submit" method="post" enctype="multipart/form-data">
+                <!--New Upload Bar-->
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <input type="submit" class="input-group-text submit" value="Upload"/>
                     </div>
-                </form>
-                <form method="post" enctype="multipart/form-data" action="/submit_similar">
-                    
-                    <div class="imgHolder" id="imageUploaded">
-                        <p id="puploaded"></p>
+                    <div class="custom-file">
+                        <input type="file" name= "input" class="custom-file-input" id="upload"
+                        aria-describedby="inputGroupFileAddon01" accept=".jpg">
+                        <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
                     </div>
+                </div>
+            </form>
+            <!--Do stuff-->
+            <form method="post" enctype="multipart/form-data" action="/submit_similar">
+                
+                <div class="imgHolder" id="imageUploaded">
+                    <p id="puploaded"></p>
+                </div>
 
-                    <div class="imgHolder" id="imageHolder0">
-                        <p id="psimilar_0"></p>
-                        <input class="hidden" id="similar_0" name="similar_0" type="checkbox" />
-                    </div>
-                    <div class="imgHolder" id="imageHolder1">
-                            <p id="psimilar_1"></p>
-                            <input class="hidden" id="similar_1" name="similar_1" type="checkbox" />
-                    </div>
-                    <div class="imgHolder" id="imageHolder2">
-                            <p id="psimilar_2"></p>
-                            <input class="hidden" id="similar_2" name="similar_2" type="checkbox" />
-                    </div>
-                    <input type="submit" id="similar_submit" class="hidden" />
-                </form>
+                <div class="imgHolder" id="imageHolder0">
+                    <p id="psimilar_0"></p>
+                    <input class="hidden" id="similar_0" name="similar_0" type="checkbox" />
+                </div>
+                <div class="imgHolder" id="imageHolder1">
+                        <p id="psimilar_1"></p>
+                        <input class="hidden" id="similar_1" name="similar_1" type="checkbox" />
+                </div>
+                <div class="imgHolder" id="imageHolder2">
+                        <p id="psimilar_2"></p>
+                        <input class="hidden" id="similar_2" name="similar_2" type="checkbox" />
+                </div>
+                <input type="submit" id="similar_submit" class="hidden" />
+            </form>
         </div>
 
         <%include Footer.ejs %>
