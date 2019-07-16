@@ -40,6 +40,7 @@
         <%include Footer.ejs %>
         </div>
         <script>
+            //ROR
             $(function() {
                 var // Define maximum number of files.
                     max_file_number = 1,
@@ -93,10 +94,11 @@
 
                 
                     
-
+                //ROR
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
 
+                //ROR
                 $file_upload.on('change', function () {
                     var number_of_images = $(this)[0].files.length;
                     if (number_of_images > max_file_number) {
