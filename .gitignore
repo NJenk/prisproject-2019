@@ -5,8 +5,7 @@
 .LSOverride
 
 # Logs
-logs/*
-!logs/.gitkeep
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
