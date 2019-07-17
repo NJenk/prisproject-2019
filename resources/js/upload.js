@@ -113,7 +113,7 @@ exports.uploadAndConvert = function(process){
 						logger.danger("tmp NOT DELETED");
 					}
 				);
-				next();
+				return next();
 			}
 			var ffmpeg = process_spawner.spawn('resources/ffmpeg', args);
 			ffmpeg.on('close',function(e){
