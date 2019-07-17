@@ -73,13 +73,13 @@
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST','/submit-query',true);
                     xhr.send(data);
-                
+
                     //Paul Brackett
                     xhr.onload = ()=>{
                         var PRISdata = JSON.parse(xhr.responseText);
-                        
+
                         displayUploadedImage(PRISdata);
-                        
+
                         //If the results exist, go ahead and add them to the page.
                         if(PRISdata["1"].results[0].label !== undefined)
                         {
@@ -99,11 +99,11 @@
 
                         showElements();
                   }
-                  
+
             });
 
-                
-                    
+
+
                 //ROR
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
@@ -142,7 +142,7 @@
                 p_similar.innerHTML = "Similarity: " + Math.round(result.percent) + "%";
             };
 
-            .//Paul Brackett
+            //Paul Brackett
             function showElements(){
                 var submit_button = document.querySelector('#similar_submit');
                 var results_row = document.querySelector('#results_row');
