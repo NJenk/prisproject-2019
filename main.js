@@ -8,7 +8,8 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs'),
-	cookieParser = require('cookie-parser');
+	cookieParser = require('cookie-parser'),
+	schedule = require('node-schedule');
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
@@ -88,31 +89,7 @@ app.post('/submit-form', upload.uploadAndConvert(upload.PRIS(false)), (req, res)
 });
 
 app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res, next) => {
-	//DEAD CODE
-	//When we get results, revisit this and uncomment/clean up.
-	/* 	var profs = req.body.profile;
 
-		//This will need to be set based on the results page form. need a way to pass in the uploaded profile.
-		//var curr_prof = req.body.current;
-		var curr_prof = 'SuT-eKa8qty';
-		profs.push(curr_prof)
-		let max = "";
-		let results = "";
-
-		//Calls the data.py script that populates the table.
-		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', profs]);
-
-		data.stderr.pipe(process.stderr);
-
-		data.on('exit', function(e){
-			console.log('poi table has been updated. Carry on.');
-			res.render('Results', {root: __dirname + '/views/'});
-		});	 */
-
-		//const item = await upload.PRISQuery;
-		//console.log(item);
-	 //let result_images = [];
-	//res.render('Results', {root: __dirname + '/views/', results: result_images});
 });
 
  //Start: Paul Brackett
@@ -143,9 +120,9 @@ app.post('/submit_similar', (req, res) => {
 		data.on('exit', function(e){
 			console.log('poi table has been updated. Carry on.');
 		res.render('Query', {root: __dirname + '/views/'});
-		});	 
+		});
 
-	}); 
+	});
 });
  //End: Paul Brackett
 
@@ -155,6 +132,18 @@ app.get('/getprogress', (req, res) => {
 });
 //End: Paul Brackett
 
+/*
+Scheduled server tasks go here
+*/
+var dailyLogRename = schedule.scheduleJob('0 32 16 * * *', ()=>{
+	console.log("Job started");
+	var today = new Date();
+	fs.rename('./resources/logs/log.txt',	'./resources/logs/'+today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear()+".txt", (err)=>{
+		if(err){
+			throw err;
+		}
+	});
+});
 
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
