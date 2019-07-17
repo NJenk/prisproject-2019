@@ -1,5 +1,5 @@
 body {
-    background-color:orange;
+    background-color:teal;
 }
 /* The main background for the page containing all inner text and images. */
 .container {
@@ -13,7 +13,7 @@ body {
     height: -moz-calc(100% - 70px);
     /* WebKit */
     height: -webkit-calc(100% - 70px);
-    background-color: rgb(226, 229, 238);
+    background-color: lightgray;
     right: 0px;
     left: 0px;    
     overflow: scroll; 
@@ -29,18 +29,30 @@ body {
 .container ul {
     text-align: left;
 }
-.container::-webkit-scrollbar {width: 0 !important}
-/*FAQ page*/
-.faq li{font-weight: bold;}
-/*About page*/
-.about-inner-unordered-list li{font-weight: normal;}
-p{text-align: justify;}
-.p-2 {text-align: left;}
+.container::-webkit-scrollbar { 
+    width: 0 !important 
+}
 
-/*Styling -- Navigation*/
-.navbar-dark {background-color: black;}
+.faq li{
+    font-weight: bold;
+}
+.about-inner-unordered-list li{
+    font-weight: normal !important
+}
+p{
+    text-align: justify;
+}
+.p-2 {
+    text-align: left;
+}
 
-ol{font-weight: bold;}
+.navbar-dark {
+    background-color: black;
+}
+
+ol{
+    font-weight: bold;
+}
 
 .main-list{
     font-weight: normal;
@@ -63,13 +75,14 @@ footer {
 .progress{
     margin: 10px;
     height:35px;
-    -webkit-text-stroke-color: black;
+}
+.progress{
+    margin: 10px;
+    height:35px;
 }
 
 .progress-bar {background-color: green; color: black;}
 .progress-bar-1 {background-color: rgb(245, 94, 120);}
 .progress-bar-33 {background-color: orange; }
 .progress-bar-67 {background-color: lightseagreen;}
-
-
-
+.progress:not([value]) {display: none;}

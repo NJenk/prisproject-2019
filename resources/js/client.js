@@ -51,7 +51,7 @@ function getProgress()
                                     existing_progress_bar.classList.add('progress-bar-67');
                                 }
                                 else if(percent_done == 100){
-                                    existing_progress_bar.classList.add('progress-bar');                                
+                                    existing_progress_bar.classList.add('progress-bar');                  
                                 }
 
                             }
