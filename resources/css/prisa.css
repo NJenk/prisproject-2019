@@ -22,9 +22,18 @@ body {
 .imgHolder{
     position: relative;
 }
+.results_image {
+    height: 250px;
+    width: auto;
+    border-width: 10px;
+}
 .hidden
 {
     visibility: hidden;
+}
+#leftDiv
+{
+    border-right: 4px solid black;
 }
 .container ul {
     text-align: left;
