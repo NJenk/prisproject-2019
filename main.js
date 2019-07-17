@@ -1,3 +1,4 @@
+//Some of this: ROR
 'use strict';
 
 const express = require('express'),
@@ -7,13 +8,16 @@ const express = require('express'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
 	fs = require('fs'),
-	cookieParser = require('cookie-parser'),
-	async = require("async");
-
+	cookieParser = require('cookie-parser');
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.use('/public', express.static(path.join(__dirname + '/resources/images')));
+app.use('/public', express.static(path.join(__dirname + '/resources/images/query_data')));
+app.use('/public', express.static(path.join(__dirname + '/resources/images/profile_pics')));
+
+
+
 app.use(cookieParser());
 
 app.set(express.static(path.join(__dirname + './views')));
@@ -74,10 +78,6 @@ app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
 
-app.get('Results'), (req, res) => {
-	res.render('Results', {root: __dirname + '/views/'});
-}
-
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
@@ -115,11 +115,45 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res,
 	//res.render('Results', {root: __dirname + '/views/', results: result_images});
 });
 
-//pulls back the global var with ajax.
+ //Start: Paul Brackett
+app.post('/submit_similar', (req, res) => {
+	var form = new formidable.IncomingForm();
+	var similar_profs = []
+
+ 	form.parse(req, function(err, fields, files){
+
+		//We need a way to add the 'original' (original in the sense that it either returned an exact match or it created a new profile)
+		//If these fields got passed back (form only sends boxes if they're checked.), add them to the array.
+		if(fields.similar_0){
+			similar_profs.push(fields.similar_0);
+		}
+
+		if(fields.similar_1){
+			similar_profs.push(fields.similar_1);
+		}
+
+		if(fields.similar_2){
+			similar_profs.push(fields.similar_2);
+		}
+
+		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', similar_profs]);
+
+		data.stderr.pipe(process.stderr);
+
+		data.on('exit', function(e){
+			console.log('poi table has been updated. Carry on.');
+		res.render('Query', {root: __dirname + '/views/'});
+		});	 
+
+	}); 
+});
+ //End: Paul Brackett
+
+ //Start: Paul Brackett
 app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress})
 });
-
+//End: Paul Brackett
 
 
 const server = app.listen(3000, function() {

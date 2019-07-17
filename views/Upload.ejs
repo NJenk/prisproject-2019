@@ -36,6 +36,7 @@
         </div>
         <%include Footer.ejs %>
         <script>
+            //ROR
             $(function() {
                 var // Define maximum number of files.
                     max_file_number = 0,
@@ -61,7 +62,8 @@
                         max_file_number = 150;
                     }
                 });
-
+                
+                //ROR
                 $file_upload.on('change', function () {
                     var number_of_images = $(this)[0].files.length;
                     if (number_of_images > max_file_number) {

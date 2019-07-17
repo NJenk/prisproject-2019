@@ -13,6 +13,7 @@ cur = conn.cursor()
 cur.execute('SELECT MAX(poiid) from POI')
 row = cur.fetchone()
 cur.close()
+conn.commit()
 
 if row[0]:
     row = row[0]
@@ -21,13 +22,11 @@ if row[0]:
 else:
     row = 1
 
-cur = conn.cursor()
 for prof in profs:
     # this one is for sqlite.
+    cur = conn.cursor()
     cur.execute('INSERT INTO POI (poiid, profileid) VALUES(?, ?)', (row, prof))
-
+    cur.close()
+    conn.commit()
     # this one is for mysql.
     #cur.execute('INSERT INTO POI (poiid, profileid) VALUES(%s, %s)', [row, prof])
-
-cur.close()
-conn.commit()

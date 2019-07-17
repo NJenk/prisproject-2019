@@ -6,8 +6,8 @@
     </head>
     <body>
         <%include navbar.ejs %>
+
         <div class="container">
-            <% if(results === undefined) { %>
                 <form action="submit-query" id="form-submit" method="post" enctype="multipart/form-data">
                     <!--New Upload Bar-->
                     <div class="input-group">
@@ -21,18 +21,42 @@
                         </div>
                     </div>
                 </form>
-
-            <% } else { %>
-                <% for(var i=0; i < results.length; i++) { %>
-                    <img src="public/<%= results[i] %>">
-                <% } %>
-            <% } %>
-
-        </div>
+                <div class="container">
+                    <form method="post" enctype="multipart/form-data" action="/submit_similar">
+                    <div id="results_row" class="row hidden">
+                        <div class="col-sm-3" id="leftDiv">
+                            <div class="imgHolder" id="imageUploaded">
+                                <p id="upload_text" class="hidden text-center">Uploaded Image</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" id="rightLeftDiv">
+                            <div class="imgHolder" id="imageHolder0">
+                                <p class="text-center" id="psimilar_0"></p>
+                                <label>Same Person:</label><input class="hidden" id="similar_0" name="similar_0" type="checkbox" />
+                            </div>
+                        </div>
+                        <div class="col-sm-3" id="rightCenterDiv">
+                            <div class="imgHolder" id="imageHolder1">
+                                    <p class="text-center" id="psimilar_1"></p>
+                                <label>Same Person:</label><input class="hidden" id="similar_1" name="similar_1" type="checkbox" />
+                            </div>
+                        </div>
+                        <div class="col-sm-3" id="rightRightDiv">
+                            <div class="imgHolder" id="imageHolder2">
+                                    <p class="text-center" id="psimilar_2"></p>
+                                <label>Same Person:</label><input class="hidden" id="similar_2" name="similar_2" type="checkbox" />
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" id="similar_submit" class="hidden" value="Associate" />
+                </form>
+                </div>
+            </div>
 
         <%include Footer.ejs %>
         </div>
         <script>
+            //ROR
             $(function() {
                 var // Define maximum number of files.
                     max_file_number = 1,
@@ -44,19 +68,47 @@
                     $button = $('.submit', $form);
 
                 $form.submit((e)=>{
-                  e.preventDefault();
-                  var data = new FormData($form[0]);
-                  var xhr = new XMLHttpRequest();
-                  xhr.open('POST','/submit-query',true);
-                  xhr.send(data);
-                  xhr.onload = ()=>{
-                    console.log(xhr.response);
-                  }
-                });
+                    e.preventDefault();
+                    var data = new FormData($form[0]);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST','/submit-query',true);
+                    xhr.send(data);
+                
+                    //Paul Brackett
+                    xhr.onload = ()=>{
+                        var PRISdata = JSON.parse(xhr.responseText);
+                        
+                        displayUploadedImage(PRISdata);
+                        
+                        //If the results exist, go ahead and add them to the page.
+                        if(PRISdata["1"].results[0].label !== undefined)
+                        {
+                            addResult(PRISdata["1"].results[0], 0);
+                        }
 
+                        if(PRISdata["1"].results[1].label !== undefined)
+                        {
+                            addResult(PRISdata["1"].results[1], 1);
+                        }
+
+                        if(PRISdata["1"].results[2].label !== undefined)
+                        {
+                            addResult(PRISdata["1"].results[2], 2);
+
+                        }
+
+                        showElements();
+                  }
+                  
+            });
+
+                
+                    
+                //ROR
                 // Disable submit button on page ready.
                 $button.prop('disabled', 'disabled');
 
+                //ROR
                 $file_upload.on('change', function () {
                     var number_of_images = $(this)[0].files.length;
                     if (number_of_images > max_file_number) {
@@ -69,6 +121,49 @@
                     $('.custom-file-label').html($(this)[0].files[0].name);
                 });
             });
+
+            //Paul Brackett
+            function addResult(result, result_num){
+                //Function does a ton of DOM manip.
+                //Selects a couple elements that were id-hardcoded 0 to 2.
+                var outer_div = document.querySelector('#imageHolder'+result_num);
+                var image_element = document.createElement("img");
+                var p_similar = document.querySelector('#psimilar_'+result_num);
+                var check_box = document.querySelector('#similar_'+result_num);
+
+                image_element.classList.add('results_image');
+                image_element.src = 'public\\profile_pics\\' + result.label + ".jpg";
+
+                outer_div.appendChild(image_element);
+
+                check_box.setAttribute('value', result.label);
+                check_box.classList.remove('hidden');
+
+                p_similar.innerHTML = "Similarity: " + Math.round(result.percent) + "%";
+            };
+
+            .//Paul Brackett
+            function showElements(){
+                var submit_button = document.querySelector('#similar_submit');
+                var results_row = document.querySelector('#results_row');
+                var upload_text = document.querySelector('#upload_text');
+
+                submit_button.classList.remove('hidden');
+                results_row.classList.remove('hidden');
+                upload_text.classList.remove('hidden');
+            };
+
+            //Paul Brackett
+            function displayUploadedImage(pris_data){
+                var image_original_div = document.querySelector('#imageUploaded');
+                var image_element = document.createElement("img");
+
+                image_element.src = 'public\\query_data\\' + pris_data["1"].image;
+                image_element.classList.add('results_image');
+
+                image_original_div.appendChild(image_element);
+            };
+
         </script>
     </body>
 </html>

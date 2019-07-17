@@ -10,9 +10,10 @@ Install the following packages with CMD:
    - imutils: `pip install imutils`
       * Windows dependency
    - Requests: `pip install requests`
+   - sklearn: `pip install sklearn`
    - Face Recognition: `pip install face_recognition`
    
-From the PRIS folder (Google Drive), drag over the following folders from `src/ib` into the prisproject `resources/PRIS` folder:
+From the PRIS folder (Google Drive), drag over the following folders from `src/lib` into the prisproject-2019 `resources/PRIS` folder:
 * 3rdparty
 * bin
 * database
@@ -21,8 +22,12 @@ From the PRIS folder (Google Drive), drag over the following folders from `src/i
 * models
 * TEMP
 
-# Running the Server
+# Running PRIS
+1. Navigate to `\pris-project2019\resources\PRIS` in CMD
+2. Enter `python PersonIdentification.py`
+
+# Running the Server (PRISA)
 PRISA currently runs on a local host.
 
-1. Change directory to `pris-project2019` in NodeJS CMD
-2. Type `node main.js` and press **Enter**
+1. Change directory to `\pris-project2019` in NodeJS CMD
+2. Enter `node main`
