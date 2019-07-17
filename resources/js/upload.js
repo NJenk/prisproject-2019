@@ -21,9 +21,11 @@ exports.PRIS = function(query){
 			args.push(req.cookies['id']);
 		}
 		var PRIS = process_spawner.spawn('python', args, {cwd:pathToPRIS});
+		var errored = false;
 		PRIS.stderr.on('data', (data)=>{
 			//logger.error(data.toString());
-			logger.danger("Processing FAILED");
+			errored = true;
+			logger.danger("Error while processing");
 		});
 		PRIS.stderr.pipe(process.stderr);
 		PRIS.stdout.on('data', (data) => {
@@ -39,6 +41,7 @@ exports.PRIS = function(query){
 			}
 			else if(sdata.startsWith(ProgressJSON))
 			{
+				errored = false;
 				//updates the global progress var.
 				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
 				var user_id = Object.keys(prog_obj)[0];
@@ -70,6 +73,12 @@ exports.PRIS = function(query){
 			}
 		});
 		PRIS.on('exit', function(e){
+			if(errored){
+				logger.danger("Processing FAILED");
+			}
+			else{
+				logger.success("Processing complete");
+			}
 			deleteFile("./resources/upload_tmp/"+fName+".avi", ()=>{
 					console.log("Video deleted!");
 				},
