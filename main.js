@@ -135,7 +135,7 @@ app.get('/getprogress', (req, res) => {
 /*
 Scheduled server tasks go here
 */
-var dailyLogRename = schedule.scheduleJob('0 13 17 * * *', ()=>{
+var dailyLogRename = schedule.scheduleJob('0 0 0 * * *', ()=>{
 	console.log("Job started");
 	var today = new Date();
 	fs.rename('./resources/logs/log.txt',	'./resources/logs/'+today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear()+".txt", (err)=>{
