@@ -1,5 +1,5 @@
 body {
-    background-color:teal;
+    background-color:orange;
 }
 /* The main background for the page containing all inner text and images. */
 .container {
@@ -13,7 +13,7 @@ body {
     height: -moz-calc(100% - 70px);
     /* WebKit */
     height: -webkit-calc(100% - 70px);
-    background-color: lightgray;
+    background-color: rgb(211, 213, 240);
     right: 0px;
     left: 0px;    
     overflow: scroll; 
