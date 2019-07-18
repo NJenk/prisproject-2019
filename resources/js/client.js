@@ -1,6 +1,6 @@
 window.setInterval(function(){
     getProgress();
-  }, 1000);
+  }, 500);
 
 //Creates a hopefully unique id for every user.
 if(!document.cookie)
@@ -52,6 +52,21 @@ function getProgress()
                                 //it did exist, so just update it.
                                 var percent_done = Math.ceil(((upload.current_frames/upload.total_frames) * 100)+1);
                                 existing_progress_bar.style = "width: "+percent_done+"%";
+                                if(percent_done < 2){
+                                    existing_progress_bar.classList.add('progress-bar');
+                                }
+                                else if(percent_done < 33){
+                                    existing_progress_bar.classList.add('progress-bar-1');
+                                }
+                                else if(percent_done >= 33 && percent_done < 67){
+                                    existing_progress_bar.classList.add('progress-bar-33');
+                                }
+                                else if(percent_done >= 67 && percent_done < 99){
+                                    existing_progress_bar.classList.add('progress-bar-67');
+                                }
+                                else if(percent_done >= 99){
+                                    existing_progress_bar.classList.add('progress-bar');                  
+                                }
                             }
                             else
                             {
