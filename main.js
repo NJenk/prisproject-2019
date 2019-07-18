@@ -81,7 +81,9 @@ app.get('/Contact', (req, res) => {
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
-
+app.get('/License', (req, res) => {
+	res.render('License', {root: __dirname + '/views/'});
+})
 //Forms
 app.post('/submit-form', upload.uploadAndConvert(upload.PRIS(false)), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
