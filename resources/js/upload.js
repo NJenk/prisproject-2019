@@ -23,18 +23,19 @@ exports.PRIS = function(query){
 		var PRIS = process_spawner.spawn('python', args, {cwd:pathToPRIS});
 		var errored = false;
 		PRIS.stderr.on('data', (data)=>{
-			//logger.error(data.toString());
 			errored = true;
 			logger.danger("Error while processing");
 		});
 		PRIS.stderr.pipe(process.stderr);
 		PRIS.stdout.on('data', (data) => {
-			//console.log("Data: "+data);
 			sdata = data.toString();
 			if(sdata.startsWith(JSONMarker)){
 				var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
 				if(jsonData===null) logger.danger("Person identification not run or no person found");
-				else logger.success("Results received");
+				else {
+					logger.success("Results received");
+					errored = false;
+				}
 				res.set({'Content-Type':'application/json'});
 				res.json(jsonData);
 				res.end();
@@ -90,7 +91,6 @@ exports.PRIS = function(query){
 	}
 }
 
-//TODO(Nick): Finish using process function
 exports.uploadAndConvert = function(process){
 	return function(req, res, next){
 		var form = new formidable.IncomingForm();
