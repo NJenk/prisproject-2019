@@ -21,23 +21,28 @@ exports.PRIS = function(query){
 			args.push(req.cookies['id']);
 		}
 		var PRIS = process_spawner.spawn('python', args, {cwd:pathToPRIS});
+		var errored = false;
 		PRIS.stderr.on('data', (data)=>{
-			//logger.error(data.toString());
-			logger.danger("Processing FAILED");
+			errored = true;
+			logger.danger("Error while processing");
 		});
 		PRIS.stderr.pipe(process.stderr);
 		PRIS.stdout.on('data', (data) => {
-			//console.log("Data: "+data);
 			sdata = data.toString();
 			if(sdata.startsWith(JSONMarker)){
-				logger.success("Results received");
 				var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
+				if(jsonData===null) logger.danger("Person identification not run or no person found");
+				else {
+					logger.success("Results received");
+					errored = false;
+				}
 				res.set({'Content-Type':'application/json'});
 				res.json(jsonData);
 				res.end();
 			}
 			else if(sdata.startsWith(ProgressJSON))
 			{
+				errored = false;
 				//updates the global progress var.
 				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
 				var user_id = Object.keys(prog_obj)[0];
@@ -69,6 +74,12 @@ exports.PRIS = function(query){
 			}
 		});
 		PRIS.on('exit', function(e){
+			if(errored){
+				logger.danger("Processing FAILED");
+			}
+			else{
+				logger.success("Processing complete");
+			}
 			deleteFile("./resources/upload_tmp/"+fName+".avi", ()=>{
 					console.log("Video deleted!");
 				},
@@ -80,7 +91,6 @@ exports.PRIS = function(query){
 	}
 }
 
-//TODO(Nick): Finish using process function
 exports.uploadAndConvert = function(process){
 	return function(req, res, next){
 		var form = new formidable.IncomingForm();
@@ -96,33 +106,12 @@ exports.uploadAndConvert = function(process){
 			}
 
 			var type = file.type.substring(0,5);
+			var args = [];
 			if(type=='video'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					deleteFile(file.path, ()=>{
-							logger.success("Conversion successful");
-							console.log(file.path+" deleted successfully");
-						},
-						()=>{
-							logger.danger("tmp NOT DELETED");
-						}
-					);
-					process(req, res, logger, fName);
-				});
+				args = ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi'];
 			}
 			else if(type=='image'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					deleteFile(file.path, ()=>{
-							logger.success("Conversion successful");
-							console.log(file.path+" deleted successfully");
-						},
-						()=>{
-							logger.danger("tmp NOT DELETED");
-						}
-					);
-					process(req, res, logger, fName);
-				});
+				args = ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi'];
 			}
 			else{
 				deleteFile(file.path, ()=>{
@@ -133,7 +122,20 @@ exports.uploadAndConvert = function(process){
 						logger.danger("tmp NOT DELETED");
 					}
 				);
+				return next();
 			}
+			var ffmpeg = process_spawner.spawn('resources/ffmpeg', args);
+			ffmpeg.on('close',function(e){
+				deleteFile(file.path, ()=>{
+						logger.success("Conversion successful");
+						console.log(file.path+" deleted successfully");
+					},
+					()=>{
+						logger.danger("tmp NOT DELETED");
+					}
+				);
+				process(req, res, logger, fName);
+			});
 		});
 		form.on('end', function(){
 			next();
