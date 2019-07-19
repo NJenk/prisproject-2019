@@ -1,5 +1,5 @@
-body {
-    background-color:orange;
+body {background-color:orange;}
+.navbar-dark {background-color: black;
 }
 /* The main background for the page containing all inner text and images. */
 .container {
@@ -19,58 +19,20 @@ body {
     overflow: scroll; 
     overflow: -moz-scrollbars-none;    
 }
-.imgHolder{
-    position: relative;
-}
-.results_image {
-    height: auto;
-    width: auto;    
-    border-width: 10px;
-    max-width: 100%;
-}
-.row{
-    flex-wrap: nowrap;
-}
-.hidden
-{
-    visibility: hidden;
-}
-#leftDiv
-{
-    border-right: 4px solid black;
-}
-.container ul {
-    text-align: left;
-}
-.container::-webkit-scrollbar { 
-    width: 0 !important 
-}
+.container ul {text-align: left;}
+.container::-webkit-scrollbar {width: 0 !important;}
 
-.faq li{
-    font-weight: bold;
-}
-.about-inner-unordered-list li{
-    font-weight: normal !important
-}
-p{
-    text-align: justify;
-}
-.p-2 {
-    text-align: left;
-}
-
-.navbar-dark {
-    background-color: black;
-}
-
-ol{
-    font-weight: bold;
-}
-
+/* Format Home, FAQ, About pages*/
+ol{font-weight: bold;}
+.faq li{font-weight: bold;}
+.about-inner-unordered-list li{font-weight: normal !important;}
+p{text-align: justify;}
+.p-2 {text-align: left;}
 .main-list{
     font-weight: normal;
     padding: 0px;
 }
+
 form {
     position: relative;
     padding: .5em;
@@ -85,32 +47,69 @@ footer {
     left: 0;
     padding: .25em;
 }
-.progress{
+
+
+/*Progress bar styling*/
+.progress {  /* Size of progress element*/
     margin: 10px;
     height:35px;
 }
-
-.progress-bar {
+.progress-bar { /* Text formatting and 100% complete color*/
     background-color: green; 
     color: black; 
     font-weight: bold;}
+/* Progress bar will change color as upload progresses*/
 .progress-bar-1 {background-color: rgb(245, 94, 120);}
 .progress-bar-33 {background-color: orange; }
 .progress-bar-67 {background-color: lightseagreen;}
-/*.progress:not([value]) {display: none;}*/
-
-.col-sm-3{
-                
-    bottom:0;   
-}
-.alert{
+.alert{ /* Change defaults for formatting */
     border: none;
     margin: 0px;
     padding: 0px;
 }
-.alert-dismissible .close{
+.alert-dismissible .close{  /* Move the close box to center */
     padding: .1rem 1.25rem !important;
 }
-.bg-secondary {
+.bg-secondary { /* Remove default background color from the progress bar containers*/
     background-color: transparent !important;
 }
+
+/* Query results formatting */
+.results_container{
+    width: 100%;
+}
+.results_original_image{
+    width: 30%;
+    padding-right:15px;
+    border-right: solid black 3px;
+}
+.results_comparison_images{
+    white-space: nowrap;
+    width:70%;
+}
+.image_container{
+    display: inline-block;
+    width:30%;
+    margin:5px;
+}
+.imgHolder{
+    position: relative;
+    bottom:0;
+}
+.results_image {
+    height: auto;
+    width: auto;    
+    border-width: 10px;
+    max-width: 100%;
+}
+.associate_button{
+    display: flex;
+}
+.row{
+    flex-wrap: nowrap;
+}
+.hidden
+{
+    visibility: hidden;
+}
+
