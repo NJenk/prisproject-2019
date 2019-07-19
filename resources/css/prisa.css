@@ -90,7 +90,10 @@ footer {
     height:35px;
 }
 
-.progress-bar {background-color: green; color: black;}
+.progress-bar {
+    background-color: green; 
+    color: black; 
+    font-weight: bold;}
 .progress-bar-1 {background-color: rgb(245, 94, 120);}
 .progress-bar-33 {background-color: orange; }
 .progress-bar-67 {background-color: lightseagreen;}
@@ -99,4 +102,10 @@ footer {
 .col-sm-3{
                 
     bottom:0;   
+}
+.alert-dismissible .close{
+    top: auto;
+}
+.bg-secondary {
+    background-color: transparent !important;
 }

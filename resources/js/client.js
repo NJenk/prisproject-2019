@@ -110,10 +110,11 @@ function createAlert(fileName)
     alert_base_div.classList.add("alert");
     alert_base_div.classList.add("alert-dismissible");
     alert_base_div.classList.add("bg-secondary");
+    
 
-    var alert_heading = document.createElement('h4');
-    alert_heading.classList.add('alert-heading');
-    alert_heading.innerHTML = fileName;
+    //var alert_heading = document.createElement('h4');
+    //alert_heading.classList.add('alert-heading');
+    //alert_heading.innerHTML = fileName;
 
     var alert_close_button = document.createElement('button');
     alert_close_button.setAttribute('type', 'button');
@@ -123,7 +124,7 @@ function createAlert(fileName)
     //Append an onclick function that sets 
 
     alert_base_div.appendChild(alert_close_button);
-    alert_base_div.appendChild(alert_heading);
+    //alert_base_div.appendChild(alert_heading);
 
     console.log("There should be an alert here lul");
     return alert_base_div;
