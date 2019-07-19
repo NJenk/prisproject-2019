@@ -103,8 +103,13 @@ footer {
                 
     bottom:0;   
 }
+.alert{
+    border: none;
+    margin: 0px;
+    padding: 0px;
+}
 .alert-dismissible .close{
-    top: auto;
+    padding: .1rem 1.25rem !important;
 }
 .bg-secondary {
     background-color: transparent !important;
