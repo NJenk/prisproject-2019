@@ -87,29 +87,51 @@ footer {
     white-space: nowrap;
     width:70%;
 }
+.row{flex-wrap: nowrap;}
+/* Image_Container is the column inside .results_comparison containing the similarity_row, same_person_checkbox, and image_comparison classes for a result. */
 .image_container{
     display: inline-block;
     width:30%;
     margin:5px;
+    
 }
 .imgHolder{
     position: relative;
-    bottom:0;
+    min-height: 300px;
+    max-width: auto;
+    
+}
+.imgHolder img{
+    position: absolute;
+    left:0;
+    bottom: 0;
+    max-height: 300px;
 }
 .results_image {
     height: auto;
-    width: auto;    
-    border-width: 10px;
+    width: 100%;    
+    border-width: 5px;
     max-width: 100%;
 }
+
+.hidden{visibility: hidden;}
+/*
+.input{
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+*/
 .associate_button{
-    display: flex;
+    margin:0 auto;
+    display:block;
 }
-.row{
-    flex-wrap: nowrap;
-}
-.hidden
-{
-    visibility: hidden;
+/* Pre element is used on the same_person_checkbox line to keep the space between the words and the checkbox. */
+pre{
+    white-space: nowrap;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
 }
 
