@@ -74,10 +74,9 @@ footer {
     background-color: transparent !important;
 }
 
-/* Query results formatting */
-.results_container{
-    width: 100%;
-}
+
+/* ---- Query results formatting ---- */
+.results_container{width: 100%;}
 .results_original_image{
     width: 30%;
     padding-right:15px;
@@ -113,15 +112,7 @@ footer {
     border-width: 5px;
     max-width: 100%;
 }
-
 .hidden{visibility: hidden;}
-/*
-.input{
-    display: block;
-    margin-left: auto;
-    margin-right: auto
-}
-*/
 .associate_button{
     margin:0 auto;
     display:block;
