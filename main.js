@@ -1,9 +1,8 @@
-//Some of this: ROR
+//Authors: Rei Radford and Nicole Jenkins
 'use strict';
 
 const express = require('express'),
 	app = express(),
-	request = require('request'),
 	path = require('path'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
@@ -19,21 +18,18 @@ app.use('/public', express.static(path.join(__dirname + '/resources/images/query
 app.use('/public', express.static(path.join(__dirname + '/resources/images/profile_pics')));
 
 
-
 app.use(cookieParser());
-
 app.set(express.static(path.join(__dirname + './views')));
+app.use(express.static(path.join(__dirname + '/resources/css')));
 
 app.set('view engine', 'ejs');
 var process_spawner = require('child_process');
 
-//this works as a global var for progress bar.
+//Global variable for progress bar
 app.locals.progress = [];
 
-app.use(express.static(path.join(__dirname + '/resources/css')));
-app.set(express.static(path.join(__dirname + 'views')));
-app.set('view engine', 'ejs');
 
+//Template routes
 app.get('/', (req, res) => {
 	res.render('layout', {root: __dirname + '/views/'});
 })
@@ -47,7 +43,7 @@ app.get('/Logs', (req, res) => {
 	var logData = [];
     var lineData = {};
     var lineReader = require('readline').createInterface({
-		// The path to the log file needs updated when we know it.
+		//Path to log file
         input: require('fs').createReadStream('resources\\logs\\log.txt')
         });
 
@@ -55,7 +51,7 @@ app.get('/Logs', (req, res) => {
         lineReader.on('line', function (line) {
             var logline = line.split(' ');
             var message = "";
-            //Get the message into one single block.
+            //Get the message into one single block
             for(var i = 3; i < logline.length; i++) {
                 message = message + logline[i] + " ";
             }
@@ -79,20 +75,20 @@ app.get('/FAQ', (req, res) => {
 app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
-
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
 app.get('/License', (req, res) => {
 	res.render('License', {root: __dirname + '/views/'});
 })
+
 //Forms
 app.post('/submit-form', upload.uploadAndConvert(upload.PRIS(false)), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
+//Results page
 app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res, next) => {
-
 });
 
  //Start: Paul Brackett
@@ -127,9 +123,7 @@ app.post('/submit_similar', (req, res) => {
 
 	});
 });
- //End: Paul Brackett
 
- //Start: Paul Brackett
 app.get('/getprogress', (req, res) => {
 	res.json({prog: req.app.locals.progress});
 });
@@ -143,9 +137,7 @@ app.post('/removeupload', (req, res) => {
 });
 //End: Paul Brackett
 
-/*
-Scheduled server tasks go here
-*/
+//Scheduled server tasks go here
 var dailyLogRename = schedule.scheduleJob('0 0 0 * * *', ()=>{
 	console.log("Job started");
 	var today = new Date();
