@@ -9,6 +9,7 @@ const express = require('express'),
 	formidable = require('formidable'),
 	fs = require('fs'),
 	cookieParser = require('cookie-parser'),
+	bodyParser = require('body-parser'),
 	schedule = require('node-schedule');
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
@@ -130,7 +131,15 @@ app.post('/submit_similar', (req, res) => {
 
  //Start: Paul Brackett
 app.get('/getprogress', (req, res) => {
-	res.json({prog: req.app.locals.progress})
+	res.json({prog: req.app.locals.progress});
+});
+
+app.use(bodyParser.json())
+app.post('/removeupload', (req, res) => {
+	//Gets index of the 'x' item.
+	var index = req.app.locals.progress[req.body.user_id].findIndex(item => item.temp_name === req.body.temp_name);
+	req.app.locals.progress[req.body.user_id].splice(index, 1);
+	res.send();
 });
 //End: Paul Brackett
 

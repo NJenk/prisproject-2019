@@ -1,16 +1,20 @@
-window.setInterval(function(){
+window.setInterval(function() {
     getProgress();
   }, 500);
 
-//Creates a hopefully unique id for every user.
-if(!document.cookie)
-{
-    var id = (Date.now().toString()).substring(6) + (Math.floor(Math.random() * 10)).toString() + (Math.floor(Math.random() * 10)).toString() + (Math.floor(Math.random() * 10)).toString();;
+//Creates a hopefully unique id for every user. The id is 6 digits from the current time and 3 random digits appended to that.
+if(!document.cookie) {
+    var id = Date.now().toString().substring(6)
+    id += Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+
     document.cookie = "id= "+ id+"; path=/";
 }
 
-function getProgress()
-{
+/* gets the global progress object and parses through it, creating and displaying progress bars as needed.
+ * Inputs:   None
+ * Outputs:  None
+ */
+function getProgress() {
     fetch('/getprogress').then(function(response) {
             return response.json();
         })
@@ -18,66 +22,52 @@ function getProgress()
                 var prog_object = data.prog;
                 var outer_div = document.querySelector('#pbar');
 
-                //Need to make sure this is a page with progress bar
-                if(outer_div)
-                {
+                //Our progress bars follow this structure: outerDiv-->alertDivs-->innerDiv-->progressBar
+                //Make sure this is a page with progress bar capabilities...
+                if(outer_div) {
+
                     //Get progress based on our cookie.
                     var user_id = document.cookie.substring(3, document.cookie.length);
                     var our_progress = prog_object[user_id];
-
-                    //For all the data in the data object, we need to parse a bunch of stuff out and do a bunch of DOM manip.
-                    if(our_progress)
-                    {
+                    
+                    if(our_progress) {
                         our_progress.forEach( function(upload) {
-                            var inner_div = document.createElement("div");
-                            inner_div.id = "innerpb"+upload.temp_name;
-                            inner_div.classList.add('progress');
 
-                            var existing_progress_bar = document.querySelector('#pb'+upload.temp_name)
+                            //get the progress bar for this specific file.
+                            var existing_progress_bar = document.querySelector('#pb'+upload.temp_name);
 
-                            if(upload.current_frames+1 === upload.total_frames)
-                            {
-                                if(existing_progress_bar)
-                                {
-                                    existing_progress_bar.style = "width: 100%";
+                            //For each upload in our_progress, either create a new progress bar or update an old one
+                            if(existing_progress_bar) {
+
+                                //If the file is finished processing, set percent_done to 100
+                                if(upload.current_frames+1 === upload.total_frames) { 
+                                    var percent_done = 100;
                                 }
-                                
-                                return;
+                                else{
+                                    percent_done = Math.ceil((upload.current_frames/upload.total_frames) * 100);
+                                }
+                            
+                                //Styles the progress bar based on percent_done.
+                                setStyle(existing_progress_bar, percent_done, user_id, upload, outer_div);
                             }
-
-                            //For each progress in this array, make a progress bar.
-                            //If the progress bar doesn't exist, create and append it. if it does exist, just update the current progress.
-                            if(existing_progress_bar)
-                            {
-                                //it did exist, so just update it.
-                                var percent_done = Math.ceil(((upload.current_frames/upload.total_frames) * 100)+1);
-                                existing_progress_bar.style = "width: "+percent_done+"%";
-                                if(percent_done < 2){
-                                    existing_progress_bar.classList.add('progress-bar');
-                                }
-                                else if(percent_done < 33){
-                                    existing_progress_bar.classList.add('progress-bar-1');
-                                }
-                                else if(percent_done >= 33 && percent_done < 67){
-                                    existing_progress_bar.classList.add('progress-bar-33');
-                                }
-                                else if(percent_done >= 67 && percent_done < 99){
-                                    existing_progress_bar.classList.add('progress-bar-67');
-                                }
-                                else if(percent_done >= 99){
-                                    existing_progress_bar.classList.add('progress-bar');                  
-                                }
-                            }
-                            else
-                            {
-
-                                var new_alert = createAlert(upload.original_name);
+                            else {
+                                //Get the inner div so we can append the progress bar to it, and it to the alert div.
+                                var inner_div = document.createElement("div");
+                                inner_div.id = "innerpb"+upload.temp_name;
+                                inner_div.classList.add('progress');
 
                                 var prog_bar = createProgressBar(upload);
                                 inner_div.appendChild(prog_bar);
-                                new_alert.appendChild(inner_div);
-                                outer_div.appendChild(new_alert);
-                                console.log("Should be appended...");
+
+                                //If the new bar to be displayed is for an image, draw it immediately with the alert/close button.
+                                if(upload.total_frames === 1) {
+                                    var new_alert = createAlert(user_id, upload.temp_name);
+                                    new_alert.appendChild(inner_div);
+                                    outer_div.appendChild(new_alert);
+                                }
+                                else {
+                                    outer_div.appendChild(inner_div);
+                                }
                             }
                         });
                     }
@@ -85,8 +75,11 @@ function getProgress()
         });
 }
 
-function createProgressBar(upload)
-{
+/* Creates a progress bar div that displays progress uof uploaded file.
+ * Inputs:  upload: The data object for the upload file
+ * Outputs: A progress bar element that can be appended to another div. 
+ */
+function createProgressBar(upload) {
     var prog_bar = document.createElement("div")
 
     prog_bar.classList.add('progress-bar');
@@ -104,28 +97,83 @@ function createProgressBar(upload)
     return prog_bar;
 }
 
-function createAlert(fileName)
-{
+/* Creates an alert div that a progress bar can be appended to and hooks the button to an ajax call that removes the file from uploads.
+ * Inputs:   user_id:              The current users id.
+ *           temp_name:            The temp name of the file the progress bar element is tracking.
+ * Outputs:  An alert element that can then have a progress bar appended to it. 
+ */
+function createAlert(user_id, temp_name) {
+    //Creates all the alert divs we need for a proper bootstrap alert.
     var alert_base_div = document.createElement('div');
     alert_base_div.classList.add("alert");
     alert_base_div.classList.add("alert-dismissible");
     alert_base_div.classList.add("bg-secondary");
-    
 
-    //var alert_heading = document.createElement('h4');
-    //alert_heading.classList.add('alert-heading');
-    //alert_heading.innerHTML = fileName;
-
+    //Creates a close button.
     var alert_close_button = document.createElement('button');
     alert_close_button.setAttribute('type', 'button');
     alert_close_button.classList.add("close");
     alert_close_button.setAttribute('data-dismiss', 'alert');
     alert_close_button.innerHTML = '×';
-    //Append an onclick function that sets 
+
+    //Append an onclick function that calls ajax for removing the clicked file from uploads.
+    alert_close_button.addEventListener('click', function(e){
+        fetch('/removeupload', {method: 'post', headers: {'content-type': 'application/json'}, body: JSON.stringify({'user_id': user_id, 'temp_name': temp_name})});
+    })
 
     alert_base_div.appendChild(alert_close_button);
-    //alert_base_div.appendChild(alert_heading);
 
-    console.log("There should be an alert here lul");
     return alert_base_div;
+}
+
+/* Sets the specified progress bars style class based on percent_done
+ * Inputs:  progress_bar_element: The element to receive the close button
+ *          percent_done:         The current level of progresss for this file.
+ *          user_id:              The current users id.
+ *          upload:               The data object for the upload file
+ *          outer_div:            The outer div all other progress bar elements are appended to.
+ * Outputs: None 
+ */
+function setStyle(progress_bar_element, percent_done, user_id, upload, outer_div) {
+    progress_bar_element.style = "width: "+percent_done+"%";
+    if(percent_done < 2){
+        progress_bar_element.classList.add('progress-bar');
+       
+    }
+    else if(percent_done < 33){
+        progress_bar_element.classList.add('progress-bar-1');
+    }
+    else if(percent_done >= 33 && percent_done < 67){
+        progress_bar_element.classList.remove('progress-bar-1');
+        progress_bar_element.classList.add('progress-bar-33');
+    }
+    else if(percent_done >= 67 && percent_done < 99){
+        progress_bar_element.classList.remove('progress-bar-33');
+        progress_bar_element.classList.add('progress-bar-67');
+    }
+    else if(percent_done >= 99){
+        progress_bar_element.classList.remove('progress-bar-67');
+        progress_bar_element.classList.add('progress-bar');  
+
+        if(upload.total_frames !== 1 && !progress_bar_element.classList.contains('done'))
+        {
+            addCloseButton(progress_bar_element, outer_div, user_id, upload.temp_name);
+        }
+    }
+}
+
+/* Adds a close button to the provided progress bar element. This is used for elements that don't originally have close buttons.
+ * Inputs:  progress_bar_element: The element to receive the close button
+ *          outer_div:            The outer div to append the progress bar to after button is added.
+ *          user_id:              The current users id.
+ *          temp_name:            The temp name of the file the progress bar element is tracking.
+ * Outputs: None 
+ */
+function addCloseButton(progress_bar_element, outer_div, user_id, temp_name) {
+    progress_bar_element.classList.add('done');
+            
+    var existing_div = progress_bar_element.parentElement;
+    var new_alert = createAlert(user_id, temp_name);    
+    new_alert.appendChild(existing_div);
+    outer_div.prepend(new_alert);  
 }
