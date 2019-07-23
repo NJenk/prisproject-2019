@@ -77,10 +77,16 @@ footer {
 
 /* ---- Query results formatting ---- */
 .results_container{width: 100%;}
-.results_original_image{
-    width: 30%;
-    padding-right:15px;
+
+.results_original_image{    
+    margin: 15px;
+    padding-right:25px;
     border-right: solid black 3px;
+    width:30%;
+}
+.image_original {
+    height:auto;
+    width:100%;
 }
 .results_comparison_images{
     white-space: nowrap;
@@ -91,12 +97,11 @@ footer {
 .image_container{
     display: inline-block;
     width:30%;
-    margin:5px;
-    
+    margin:5px;    
 }
 .imgHolder{
     position: relative;
-    min-height: 300px;
+    min-height: 350px;
     max-width: auto;
     
 }
@@ -105,12 +110,15 @@ footer {
     left:0;
     bottom: 0;
     max-height: 300px;
+    height: auto;
+    margin:0 auto;
+    display:block;
 }
 .results_image {
     height: auto;
     width: 100%;    
     border-width: 5px;
-    max-width: 100%;
+    max-width: 100%;    
 }
 .hidden{visibility: hidden;}
 .associate_button{
