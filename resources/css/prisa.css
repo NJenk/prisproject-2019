@@ -1,4 +1,4 @@
-body {background-color:orange;}
+body {background-color: darkcyan;}
 .navbar-dark {background-color: black;
 }
 /* The main background for the page containing all inner text and images. */
@@ -13,7 +13,7 @@ body {background-color:orange;}
     height: -moz-calc(100% - 70px);
     /* WebKit */
     height: -webkit-calc(100% - 70px);
-    background-color: rgb(211, 213, 240);
+    background-color: aliceblue;
     right: 0px;
     left: 0px;    
     overflow: scroll; 
