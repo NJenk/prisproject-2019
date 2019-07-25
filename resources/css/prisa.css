@@ -1,5 +1,11 @@
-body {background-color: darkcyan;}
-.navbar-dark {background-color: black;
+body {
+    background-color: darkcyan;
+}
+.navbar-dark {
+    background-color: black;
+}
+.nav-item:hover {
+    background-color: grey;
 }
 /* The main background for the page containing all inner text and images. */
 .container {
@@ -19,8 +25,12 @@ body {background-color: darkcyan;}
     overflow: scroll; 
     overflow: -moz-scrollbars-none;    
 }
-.container ul {text-align: left;}
-.container::-webkit-scrollbar {width: 0 !important;}
+.container ul {
+    text-align: left;
+}
+.container::-webkit-scrollbar {
+    width: 0 !important;
+}
 
 /* Format Home, FAQ, About pages*/
 ol{font-weight: bold;}
@@ -76,7 +86,9 @@ footer {
 
 
 /* ---- Query results formatting ---- */
-.results_container{width: 100%;}
+.results_container {
+    width: 100%;
+}
 
 .results_original_image{    
     margin: 15px;
@@ -92,7 +104,9 @@ footer {
     white-space: nowrap;
     width:70%;
 }
-.row{flex-wrap: nowrap;}
+.row{
+    flex-wrap: nowrap;
+}
 /* Image_Container is the column inside .results_comparison containing the similarity_row, same_person_checkbox, and image_comparison classes for a result. */
 .image_container{
     display: inline-block;
@@ -120,7 +134,9 @@ footer {
     border-width: 5px;
     max-width: 100%;    
 }
-.hidden{visibility: hidden;}
+.hidden{
+    visibility: hidden;
+}
 .associate_button{
     margin:0 auto;
     display:block;
