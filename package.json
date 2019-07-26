@@ -23,7 +23,9 @@
     "pug": "^2.0.4",
     "request": "^2.88.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tui-jsdoc-template": "^1.2.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
