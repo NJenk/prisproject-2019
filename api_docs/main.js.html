@@ -98,7 +98,7 @@ app.get('/Query', (req, res) => {
 })
 app.get('/Logs',
 	/**
-	* Express middleware to parse log files into data usable by the front-end
+	* Express middleware to parse log files into data usable by the front-end. NOTE: This is an anonymous function.
 	* @function parseLogs
 	* @memberof Server
 	* @param {object} req - Express HTTP request object
@@ -160,7 +160,7 @@ app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res,
  //Start: Paul Brackett
 app.post('/submit_similar',
 	/**
-	* Express middleware to send user selected profile linking information to the database
+	* Express middleware to send user selected profile linking information to the database. NOTE: This is an anonymous function.
 	* @function submitSimilar
 	* @memberof Server
 	* @param {object} req - Express HTTP request object
@@ -192,8 +192,7 @@ app.post('/submit_similar',
 		data.stderr.pipe(process.stderr);
 
 		data.on('exit', function(e){
-			console.log('poi table has been updated. Carry on.');
-		res.render('Query', {root: __dirname + '/views/'});
+			res.render('Query', {root: __dirname + '/views/'});
 		});
 
 	});
@@ -224,7 +223,6 @@ app.post('/removeupload', (req, res) => {
 * @author Nick Julien
 */
 var dailyLogRename = schedule.scheduleJob('0 0 0 * * *', ()=>{
-	console.log("Job started");
 	var today = new Date();
 	fs.rename('./resources/logs/log.txt',	'./resources/logs/'+(today.getDate()-1)+"-"+(today.getMonth()+1)+"-"+today.getFullYear()+".txt", (err)=>{
 		if(err){
