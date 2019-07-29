@@ -15,15 +15,19 @@ os.chdir(dir_path)
 
 class PersonReIdentificationSystemCore():
 
-        def __init__(self, reader):
+        def __init__(self, reader, user_id, temp_name, original_name):
                 self.reader = reader
                 self.person_detection = PersonDetectionModule("box")
                 self.feature_extraction = FeatureExtractionModule()
                 self.person_identification_url = 'http://127.0.0.1:8080/'
-                self.frames_processed = 0
-                self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT)) # 5fps for a 10s video
-
+                self.progressData = {}
+                self.total_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
                 self.frames_left = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
+                self.user_id = user_id
+
+                self.progressData[user_id] = {'temp_name': temp_name, 'original_name': original_name, 'total_frames': self.total_frames, 'current_frames': 0}
+
+
 
         def display(self, mode, count=0, condition=True, frame=None, fMatrix=None, box=None, label=[0, "1", "None", "None"]):
                 if(mode == 0):
@@ -97,7 +101,7 @@ class PersonReIdentificationSystemCore():
                 condition = True
 
                 while(condition):
-
+                        print("Condition")
                         #STEP-01: Pull the frame
                         condition, frame = self.reader.read()
 
@@ -153,17 +157,12 @@ class PersonReIdentificationSystemCore():
                                                 count += 1
                                 self.display(4) #comment out to disable matrix display
 
-                                self.frames_processed += 1
-                                self.frames_left = self.total_frames - self.frames_processed
+                                self.progressData[self.user_id]['current_frames'] += 1
 
-                                self.percent_frames = self.frames_processed/self.total_frames
-                                self.percent_frames = self.percent_frames * 100
-
-                                print("curr frames: "+ str(self.frames_processed))
-                                print("total frames: "+ str(self.total_frames))
-
-                                print("PD:"+str(self.percent_frames+1)+"%")
                                 sys.stdout.flush()
+                                time.sleep(.1)
+                                print("Progress JSON:")
+                                print(json.dumps(self.progressData),flush=True)
                                 time.sleep(.1)
 
                                 #Display the output for the demo
@@ -175,13 +174,12 @@ class PersonReIdentificationSystemCore():
                 self.reader.release()
                 cv2.destroyAllWindows()
 
-                #Need to reset the bar after the first file finishes, and probably need to send a message to the front about how many are left.
                 print('Jobs done!')
 
 #==================driver for the PRIS core================================
 if(__name__=="__main__"):
 
-        arg_names = ['command','filename','query_filename']
+        arg_names = ['command','filename','query_filename', 'user_id']
         args = dict(zip(arg_names, sys.argv))
         AllArgs = collections.namedtuple('AllArgs', arg_names)
         args = AllArgs(*(args.get(arg, None) for arg in arg_names))
@@ -190,8 +188,16 @@ if(__name__=="__main__"):
         filename = args.filename
 
         reader = cv2.VideoCapture(filename)
-        core = PersonReIdentificationSystemCore(reader)
-        if args.query_filename == None:
+
+        # Parse out temp and original names
+        original_name = args.query_filename
+
+        temp_name = args.filename[args.filename.rfind('\\') +1:]
+        temp_name = temp_name[:temp_name.index('.')]
+
+        core = PersonReIdentificationSystemCore(reader, args.user_id, temp_name, original_name)
+
+        if args.user_id:
                 core.process_video()
         else:
                 fData = core.process_video(True,args.query_filename)

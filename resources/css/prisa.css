@@ -1,7 +1,13 @@
 body {
-    background-color:teal;
+    background-color: darkcyan;
 }
-
+.navbar-dark {
+    background-color: black;
+}
+.nav-item:hover {
+    background-color: grey;
+}
+/* The main background for the page containing all inner text and images. */
 .container {
     border: .2em solid black;
     position: fixed;
@@ -10,43 +16,33 @@ body {
     border-bottom: none;
     padding: 10px;
     /* Firefox */
-    height: -moz-calc(100% - 60px);
+    height: -moz-calc(100% - 70px);
     /* WebKit */
-    height: -webkit-calc(100% - 60px);
-    background-color: lightgray;
+    height: -webkit-calc(100% - 70px);
+    background-color: aliceblue;
     right: 0px;
     left: 0px;    
-    overflow: scroll;    
+    overflow: scroll; 
+    overflow: -moz-scrollbars-none;    
 }
 .container ul {
     text-align: left;
 }
-.container::-webkit-scrollbar { width: 0 !important }
-.container { overflow: -moz-scrollbars-none; }
-.faq li{
-    font-weight: bold;
+.container::-webkit-scrollbar {
+    width: 0 !important;
 }
 
-p{
-    text-align: justify;
-}
-
-.p-2 {
-    text-align: left;
-}
-
-.navbar-dark {
-    background-color: black;
-}
-
-ol{
-    font-weight: bold;
-}
-
+/* Format Home, FAQ, About pages*/
+ol{font-weight: bold;}
+.faq li{font-weight: bold;}
+.about-inner-unordered-list li{font-weight: normal !important;}
+p{text-align: justify;}
+.p-2 {text-align: left;}
 .main-list{
     font-weight: normal;
     padding: 0px;
 }
+
 form {
     position: relative;
     padding: .5em;
@@ -61,25 +57,96 @@ footer {
     left: 0;
     padding: .25em;
 }
-#pb {
-    width: 0%;
-    background-color: limegreen
-}
-.progress{
-    margin: 10px;
-}
-/*.progress:not([value]) {display: none;}*/
 
-.progress[value]::-webkit-progress-value {
-    display: flex;
-    background-image: 
-    -webkit-linear-gradient(-45deg, transparent 33%, rgba(0, 0, 0, .1) 33%, rgba(0,0, 0, .1)        66%, transparent 66%),
-    -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)),
-    -webkit-linear-gradient(left, yellow, green );
-    height: 35px;
-    border-radius: 2px; 
-    background-size: 35px 20px, 100% 100%, 100% 100%;
+
+/*Progress bar styling*/
+.progress {  /* Size of progress element*/
+    margin: 10px;
+    height:35px;
 }
-.input-group-prepend {
-    cursor: context-menu;
+.progress-bar { /* Text formatting and 100% complete color*/
+    background-color: green; 
+    color: black; 
+    font-weight: bold;}
+/* Progress bar will change color as upload progresses*/
+.progress-bar-1 {background-color: rgb(245, 94, 120);}
+.progress-bar-33 {background-color: orange; }
+.progress-bar-67 {background-color: lightseagreen;}
+.alert{ /* Change defaults for formatting */
+    border: none;
+    margin: 0px;
+    padding: 0px;
 }
+.alert-dismissible .close{  /* Move the close box to center */
+    padding: .1rem 1.25rem !important;
+}
+.bg-secondary { /* Remove default background color from the progress bar containers*/
+    background-color: transparent !important;
+}
+
+
+/* ---- Query results formatting ---- */
+.results_container {
+    width: 100%;
+}
+
+.results_original_image{    
+    margin: 15px;
+    padding-right:25px;
+    border-right: solid black 3px;
+    width:30%;
+}
+.image_original {
+    height:auto;
+    width:100%;
+}
+.results_comparison_images{
+    white-space: nowrap;
+    width:70%;
+}
+.row{
+    flex-wrap: nowrap;
+}
+/* Image_Container is the column inside .results_comparison containing the similarity_row, same_person_checkbox, and image_comparison classes for a result. */
+.image_container{
+    display: inline-block;
+    width:30%;
+    margin:5px;    
+}
+.imgHolder{
+    position: relative;
+    min-height: 350px;
+    max-width: auto;
+    
+}
+.imgHolder img{
+    position: absolute;
+    left:0;
+    bottom: 0;
+    max-height: 300px;
+    height: auto;
+    margin:0 auto;
+    display:block;
+}
+.results_image {
+    height: auto;
+    width: 100%;    
+    border-width: 5px;
+    max-width: 100%;    
+}
+.hidden{
+    visibility: hidden;
+}
+.associate_button{
+    margin:0 auto;
+    display:block;
+}
+/* Pre element is used on the same_person_checkbox line to keep the space between the words and the checkbox. */
+pre{
+    white-space: nowrap;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+

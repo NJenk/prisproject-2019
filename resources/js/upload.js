@@ -1,5 +1,6 @@
 const pathToPRIS = process.cwd()+'\\resources\\PRIS\\';
 const JSONMarker = "Results JSON:";
+const ProgressJSON = "Progress JSON:";
 
 var formidable = require('formidable');
 var fs = require('fs');
@@ -8,70 +9,88 @@ var util = require('util');
 
 var process_spawner = require('child_process');
 
-exports.PRISQuery = function(req, res, logger, fName){
-	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi",fName],{cwd:pathToPRIS});
-	PRIS.stderr.on('data', (data)=>{
-		//logger.error(data.toString());
-		logger.danger("Processing FAILED");
-	});
-	PRIS.stderr.pipe(process.stderr);
-	PRIS.stdout.on('data', (data) => {
-		//console.log("Data: "+data);
-		sdata = data.toString();
-		if(sdata.startsWith(JSONMarker)){
-			logger.success("Results received");
-			var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
-			res.set({'Content-Type':'application/json'});
-			res.json(jsonData);
-			res.end();
+exports.PRIS = function(query){
+	return function(req, res, logger, fName){
+		req.app.locals.progress = {};
+		var args =  [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"];
+		if(query){
+			args.push(fName);
 		}
-		if(sdata.indexOf("PD:") != -1)
-		{
-				//updates the global progress var.
-				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
+		else{
+			args.push(logger.filename);
+			args.push(req.cookies['id']);
 		}
-	});
-	PRIS.on('exit', function(e){
-		fs.unlink("./resources/upload_tmp/"+fName+".avi", (err) =>{
-			if(err){
-				//logger.error(err);
-				logger.danger("NOT DELETED");
-				throw err;
+		var PRIS = process_spawner.spawn('python', args, {cwd:pathToPRIS});
+		var errored = false;
+		PRIS.stderr.on('data', (data)=>{
+			errored = true;
+			logger.danger("Error while processing");
+		});
+		PRIS.stderr.pipe(process.stderr);
+		PRIS.stdout.on('data', (data) => {
+			sdata = data.toString();
+			if(sdata.startsWith(JSONMarker)){
+				var jsonData = JSON.parse(sdata.substring(JSONMarker.length,data.toString().length));
+				if(jsonData===null) logger.danger("Person identification not run or no person found");
+				else {
+					logger.success("Results received");
+					errored = false;
+				}
+				res.set({'Content-Type':'application/json'});
+				res.json(jsonData);
+				res.end();
 			}
-			console.log('Video deleted!');
-		})
-	});
+			else if(sdata.startsWith(ProgressJSON))
+			{
+				errored = false;
+				//updates the global progress var.
+				var prog_obj = JSON.parse(sdata.substring(ProgressJSON.length,data.toString().length))
+				var user_id = Object.keys(prog_obj)[0];
+
+				//determines if we need to add to the progress structure or not.
+				if(!(user_id in req.app.locals.progress))
+				{
+					//The key doesn't exist, so we have to add it and then add the value.
+					req.app.locals.progress[user_id] = [prog_obj[user_id]];
+				}
+				else
+				{
+
+					//Check to see if this temp already exists. If it does, update current only. Otherwise add it.
+					if(req.app.locals.progress[user_id].some(el => el.temp_name === prog_obj[user_id].temp_name))
+					{
+						//Gets the index of this particular temp ID so we can update it.
+						const index = req.app.locals.progress[user_id].findIndex(item => item.temp_name === prog_obj[user_id].temp_name);
+
+						//update the progress.
+						req.app.locals.progress[user_id][index] = prog_obj[user_id];
+					}
+					else
+					{
+						//The temp_name isn't in this users progress, so we need to add this.
+						req.app.locals.progress[user_id].push(prog_obj[user_id])
+					}
+				}
+			}
+		});
+		PRIS.on('exit', function(e){
+			if(errored){
+				logger.danger("Processing FAILED");
+			}
+			else{
+				logger.success("Processing complete");
+			}
+			deleteFile("./resources/upload_tmp/"+fName+".avi", ()=>{
+					console.log("Video deleted!");
+				},
+				()=>{
+					logger.danger("NOT DELETED");
+				}
+			);
+		});
+	}
 }
 
-exports.PRISUpload = function(req, res, logger, fName){
-	var PRIS = process_spawner.spawn('python', [pathToPRIS+'\\core.py',process.cwd()+"\\resources\\upload_tmp\\"+fName+".avi"],{cwd:pathToPRIS});
-	PRIS.stderr.on('data', (data)=>{
-		//logger.error(data.toString());
-		logger.danger("Processing FAILED");
-	});
-	PRIS.stderr.pipe(process.stderr);
-	PRIS.stdout.on('data', (data) => {
-		//console.log("Data: "+data);
-		sdata = data.toString();
-		if(sdata.indexOf("PD:") != -1)
-		{
-				//updates the global progress var.
-				req.app.locals.progress = sdata.substring(sdata.indexOf("PD:")+3, sdata.indexOf("%"));
-		}
-	});
-	PRIS.on('exit', function(e){
-		fs.unlink("./resources/upload_tmp/"+fName+".avi", (err) =>{
-			if(err){
-				//logger.error(err);
-				logger.danger("NOT DELETED");
-				throw err;
-			}
-			console.log('Video deleted!');
-		})
-	});
-}
-
-//TODO(Nick): Finish using process function
 exports.uploadAndConvert = function(process){
 	return function(req, res, next){
 		var form = new formidable.IncomingForm();
@@ -87,54 +106,36 @@ exports.uploadAndConvert = function(process){
 			}
 
 			var type = file.type.substring(0,5);
+			var args = [];
 			if(type=='video'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					fs.unlink(file.path, (err) => {
-						if (err){
-							//logger.error(err);
-							logger.danger("NOT DELETED");
-							throw err;
-						}
-
-						logger.success("Conversion successful");
-
-						console.log(file.path+" deleted successfully");
-					});
-					process(req, res, logger, fName);
-				});
+				args = ['-i',file.path,'-filter:v','fps=fps=5', './resources/upload_tmp/'+fName+'.avi'];
 			}
 			else if(type=='image'){
-				var ffmpeg = process_spawner.spawn('resources/ffmpeg', ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi']);
-				ffmpeg.on('close',function(e){
-					fs.unlink(file.path, (err) => {
-						if (err){
-							//logger.error(err);
-							logger.danger("NOT DELETED");
-							throw err;
-						}
-
-						logger.success("Conversion successful");
-
-						console.log(file.path+" deleted successfully");
-					});
-					process(req, res, logger, fName);
-				});
+				args = ['-loop','1','-i',file.path,'-r','1','-t','1','-vcodec','libx264','./resources/upload_tmp/'+fName+'.avi'];
 			}
 			else{
-				//pull this out to a function maybe?
-				fs.unlink(file.path, (err) => {
-					if (err){
-						//logger.error(err);
-						logger.danger("NOT DELETED");
-						throw err;
+				deleteFile(file.path, ()=>{
+						logger.danger("Unsupported filetype");
+						console.log(file.path+" deleted successfully");
+					},
+					()=>{
+						logger.danger("tmp NOT DELETED");
 					}
-
-					logger.danger("Unsupported filetype");
-
-					console.log(file.path+" deleted successfully");
-				});
+				);
+				return next();
 			}
+			var ffmpeg = process_spawner.spawn('resources/ffmpeg', args);
+			ffmpeg.on('close',function(e){
+				deleteFile(file.path, ()=>{
+						logger.success("Conversion successful");
+						console.log(file.path+" deleted successfully");
+					},
+					()=>{
+						logger.danger("tmp NOT DELETED");
+					}
+				);
+				process(req, res, logger, fName);
+			});
 		});
 		form.on('end', function(){
 			next();
@@ -143,4 +144,14 @@ exports.uploadAndConvert = function(process){
 
 		});
 	}
+}
+
+function deleteFile(file, success, failure){
+	fs.unlink(file, (err) => {
+		if(err){
+			failure();
+			throw err;
+		}
+		success();
+	})
 }

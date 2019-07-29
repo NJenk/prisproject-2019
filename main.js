@@ -1,29 +1,35 @@
+//Authors: Rei Radford and Nicole Jenkins
 'use strict';
 
 const express = require('express'),
 	app = express(),
-	request = require('request'),
 	path = require('path'),
 	upload = require('./resources/js/upload.js'),
 	formidable = require('formidable'),
-	fs = require('fs');
-
+	fs = require('fs'),
+	cookieParser = require('cookie-parser'),
+	bodyParser = require('body-parser'),
+	schedule = require('node-schedule');
 
 app.use('/public', express.static(path.join(__dirname + '/resources/css')));
 app.use('/public', express.static(path.join(__dirname + '/resources/js')));
 app.use('/public', express.static(path.join(__dirname + '/resources/images')));
+app.use('/public', express.static(path.join(__dirname + '/resources/images/query_data')));
+app.use('/public', express.static(path.join(__dirname + '/resources/images/profile_pics')));
+
+
+app.use(cookieParser());
 app.set(express.static(path.join(__dirname + './views')));
+app.use(express.static(path.join(__dirname + '/resources/css')));
 
 app.set('view engine', 'ejs');
 var process_spawner = require('child_process');
 
-//this works as a global var for progress bar.
-app.locals.progress = "0";
+//Global variable for progress bar
+app.locals.progress = [];
 
-app.use(express.static(path.join(__dirname + '/resources/css')));
-app.set(express.static(path.join(__dirname + 'views')));
-app.set('view engine', 'ejs');
 
+//Template routes
 app.get('/', (req, res) => {
 	res.render('layout', {root: __dirname + '/views/'});
 })
@@ -37,7 +43,7 @@ app.get('/Logs', (req, res) => {
 	var logData = [];
     var lineData = {};
     var lineReader = require('readline').createInterface({
-		// The path to the log file needs updated when we know it.
+		//Path to log file
         input: require('fs').createReadStream('resources\\logs\\log.txt')
         });
 
@@ -45,7 +51,7 @@ app.get('/Logs', (req, res) => {
         lineReader.on('line', function (line) {
             var logline = line.split(' ');
             var message = "";
-            //Get the message into one single block.
+            //Get the message into one single block
             for(var i = 3; i < logline.length; i++) {
                 message = message + logline[i] + " ";
             }
@@ -69,54 +75,78 @@ app.get('/FAQ', (req, res) => {
 app.get('/Contact', (req, res) => {
 	res.render('Contact', {root: __dirname + '/views/'});
 })
-
-//Checking result view
-app.get('/Results', (req, res) => {
-	res.render('Results', {root: __dirname + '/views/'});
-});
-
 app.get('/Popup', (req, res) => {
 	res.render('popup', {root: __dirname + '/views/'});
 });
+app.get('/License', (req, res) => {
+	res.render('License', {root: __dirname + '/views/'});
+})
 
-app.post('/submit-form', upload.uploadAndConvert(upload.PRISUpload), (req, res) => {
+//Forms
+app.post('/submit-form', upload.uploadAndConvert(upload.PRIS(false)), (req, res) => {
 	res.render('Upload', {root: __dirname + '/views/'});
 });
 
-app.post('/submit-query', upload.uploadAndConvert(upload.PRISQuery), (req, res) => {
-	//When we get results, revisit this and uncomment/clean up.
-	/* 	var profs = req.body.profile;
+//Results page
+app.post('/submit-query', upload.uploadAndConvert(upload.PRIS(true)), (req, res, next) => {
+});
 
-		//This will need to be set based on the results page form. need a way to pass in the uploaded profile.
-		//var curr_prof = req.body.current;
-		var curr_prof = 'SuT-eKa8qty';
-		profs.push(curr_prof)
-		let max = "";
-		let results = "";
+ //Start: Paul Brackett
+app.post('/submit_similar', (req, res) => {
+	var form = new formidable.IncomingForm();
+	var similar_profs = []
 
-		//Calls the data.py script that populates the table.
-		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', profs]);
+ 	form.parse(req, function(err, fields, files){
+
+		//We need a way to add the 'original' (original in the sense that it either returned an exact match or it created a new profile)
+		//If these fields got passed back (form only sends boxes if they're checked.), add them to the array.
+		if(fields.similar_0){
+			similar_profs.push(fields.similar_0);
+		}
+
+		if(fields.similar_1){
+			similar_profs.push(fields.similar_1);
+		}
+
+		if(fields.similar_2){
+			similar_profs.push(fields.similar_2);
+		}
+
+		var data = process_spawner.spawn('python', [process.cwd()+'\\resources\\data.py', similar_profs]);
 
 		data.stderr.pipe(process.stderr);
 
 		data.on('exit', function(e){
 			console.log('poi table has been updated. Carry on.');
-			res.render('Results', {root: __dirname + '/views/'});
-		});	 */
-	let result_images = [
-		'profile_pics/examples/razzy1.jpg',
-		'profile_pics/examples/razzy2.jpg',
-		'profile_pics/examples/razzy3.jpg',
-	];
-	res.render('Query', {root: __dirname + '/views/', results: result_images});
+		res.render('Query', {root: __dirname + '/views/'});
+		});
+
+	});
 });
 
-//pulls back the global var with ajax.
 app.get('/getprogress', (req, res) => {
-	res.json({prog: req.app.locals.progress})
+	res.json({prog: req.app.locals.progress});
 });
 
+app.use(bodyParser.json())
+app.post('/removeupload', (req, res) => {
+	//Gets index of the 'x' item.
+	var index = req.app.locals.progress[req.body.user_id].findIndex(item => item.temp_name === req.body.temp_name);
+	req.app.locals.progress[req.body.user_id].splice(index, 1);
+	res.send();
+});
+//End: Paul Brackett
 
+//Scheduled server tasks go here
+var dailyLogRename = schedule.scheduleJob('0 0 0 * * *', ()=>{
+	console.log("Job started");
+	var today = new Date();
+	fs.rename('./resources/logs/log.txt',	'./resources/logs/'+today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear()+".txt", (err)=>{
+		if(err){
+			throw err;
+		}
+	});
+});
 
 const server = app.listen(3000, function() {
 	console.log(`Server started on port ${server.address().port}`);
