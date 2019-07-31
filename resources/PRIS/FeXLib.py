@@ -6,24 +6,25 @@ from operator import add
 from sklearn.cluster import KMeans
 import subprocess
 import json
+import tempfile
 
 def get_skeleton_keypoints(frame):
-	#STEP-01: Use OpenPose to get the skeleton
-	temp_dir = 'TEMP'
-	img_dir = temp_dir+'/img'
-	exe_loc = 'bin/OpenPoseDemo.exe'
-	keypoints_dir = temp_dir+'/JSON'
-	
-	cv2.imwrite(img_dir+'/frame.jpg', frame)
-	#input("wrote image")
-	
-	cmd = [exe_loc, '--image_dir', img_dir, "--write_json", keypoints_dir, "--display", "0", "--render_pose", "0", "--net_resolution", "320x176"]
-	results = subprocess.run(cmd, stdout=subprocess.PIPE)
-	results.stdout.decode('utf-8')
-	#input("wrote keypoints")
-	
-	with open(keypoints_dir+'/frame_keypoints.json', 'r') as f:
-		obj = json.load(f)
+	with tempfile.TemporaryDirectory() as temp_dir:
+		#STEP-01: Use OpenPose to get the skeleton
+		img_dir = temp_dir
+		exe_loc = 'bin/OpenPoseDemo.exe'
+		keypoints_dir = temp_dir
+		
+		cv2.imwrite(img_dir+'/frame.jpg', frame)
+		#input("wrote image")
+		
+		cmd = [exe_loc, '--image_dir', img_dir, "--write_json", keypoints_dir, "--display", "0", "--render_pose", "0", "--net_resolution", "320x176"]
+		results = subprocess.run(cmd, stdout=subprocess.PIPE)
+		results.stdout.decode('utf-8')
+		#input("wrote keypoints")
+		
+		with open(keypoints_dir+'/frame_keypoints.json', 'r') as f:
+			obj = json.load(f)
 
 	data = obj["people"]
 	ourDict = data[0]
