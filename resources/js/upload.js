@@ -1,4 +1,11 @@
 /**
+* @file upload.js
+*	@desc This file contains the upload module, which defines all of our file handling logic
+* @author Nick Julien
+* @author Paul Brackett
+*/
+
+/**
 * @module Upload
 *	@desc Back-end code related to uploading video and image files for processing, as well as the code to process them
 *	@author Nick Julien

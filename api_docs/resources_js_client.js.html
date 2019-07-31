@@ -1,44 +1,24 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: resources/js/client.js | PRISA</title>
+    <title>JSDoc: Source: resources/js/client.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
-
-    
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
-<body>
-<nav class="lnb" id="lnb">
-    <div class="logo" style="">
-        
-            <img src="img/toast-ui.png" width="100%" height="100%">
-        
-    </div>
-    <div class="title">
-        <h1><a href="index.html" class="link">PRISA</a></h1>
-        
-    </div>
-    <div class="search-container" id="search-container">
-        <input type="text" placeholder="Search">
-        <ul></ul>
-    </div>
-    
-    <div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-Logs.html">Logs</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:Logs_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-Logs.html#~getFormattedDate">getFormattedDate</a></li></ul></div></li><li><a href="module-Upload.html">Upload</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:Upload_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-Upload.html#.PRIS">PRIS</a></li><li><a href="module-Upload.html#.uploadAndConvert">uploadAndConvert</a></li><li><a href="module-Upload.html#~deleteFile">deleteFile</a></li><li><a href="module-Upload.html#~PRIS">PRIS</a></li><li><a href="module-Upload.html#~uploadAndConvert">uploadAndConvert</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="module-Logs-Logger.html">Logger</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:Logs~Logger_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-Logs-Logger.html#close">close</a></li><li><a href="module-Logs-Logger.html#danger">danger</a></li><li><a href="module-Logs-Logger.html#error">error</a></li><li><a href="module-Logs-Logger.html#info">info</a></li><li><a href="module-Logs-Logger.html#success">success</a></li><li><a href="module-Logs-Logger.html#warning">warning</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="Progress.html">Progress</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Progress_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Progress.html#.addCloseButton">addCloseButton</a></li><li><a href="Progress.html#.createAlert">createAlert</a></li><li><a href="Progress.html#.createProgressBar">createProgressBar</a></li><li><a href="Progress.html#.getProgress">getProgress</a></li><li><a href="Progress.html#.setStyle">setStyle</a></li></ul></div></li><li><a href="Scheduled.html">Scheduled</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Scheduled_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Scheduled.html#.dailyLogRename">dailyLogRename</a></li></ul></div></li><li><a href="Server.html">Server</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Server_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Server.html#.parseLogs">parseLogs</a></li><li><a href="Server.html#.submitSimilar">submitSimilar</a></li></ul></div></li></ul></div>
-</nav>
-<div id="resizer"></div>
 
-<div class="main" id="main">
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: resources/js/client.js</h1>
+
     
 
 
@@ -47,9 +27,14 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
-* @namespace Progress
+* @file client.js
 * @desc Front-end code to manage the spawning, updating, and deleting of progress bars
 * @author Paul Brackett
+* @see client
+*/
+
+/**
+* @namespace client
 */
 
 window.setInterval(function() {
@@ -66,8 +51,8 @@ if(!document.cookie) {
 
 /** Parse the asynchronously fetched global progress object and spawn progress bars
  * @author Paul Brackett
- * @memberof Progress
  * @async
+ * @memberof client
  */
 function getProgress() {
     fetch('/getprogress').then(function(response) {
@@ -132,7 +117,7 @@ function getProgress() {
 
 /**
  * Generate a new progress bar div for a specific file
- * @memberof Progress
+ * @memberof client
  * @param {Object} upload - Progress data object for a specific video
  * @param {string} upload.temp_name - Current name of the video
  * @param {string} upload.original_name - User's original filename for the video or image
@@ -158,7 +143,7 @@ function createProgressBar(upload) {
 
 /**
  * Create an alert div and hook its close button to a function that asynchronously removes a file from the global progress object
- * @memberof Progress
+ * @memberof client
  * @param {string} user_id - Unique identifier for the current user
  * @param {string} temp_name - Current name of the file the button will remove from the progress object
  * @return {Object} DOM div element of a bootstrap alert box
@@ -189,7 +174,7 @@ function createAlert(user_id, temp_name) {
 
 /**
  * Set a class on a given progress bar based on its completion percentage
- * @memberof Progress
+ * @memberof client
  * @param {Object} progress_bar_element - DOM object of a bootstrap progress bar
  * @param {number} percent_done - Percent completion of the given progress bar
  * @param {string} user_id - Unique identifier for the current user
@@ -226,7 +211,7 @@ function setStyle(progress_bar_element, percent_done, user_id, upload, outer_div
 
 /**
  * Add a close button to a DOM element
- * @memberof Progress
+ * @memberof client
  * @param {object} progress_bar_element - DOM element to recieve a close button
  * @param {object} outer_div - DOM object for the parent div of the given object
  * @param {string} user_id - Unique identifier for the current user
@@ -249,24 +234,17 @@ function addCloseButton(progress_bar_element, outer_div, user_id, temp_name) {
 
 </div>
 
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Logs.html">Logs</a></li><li><a href="module-Upload.html">Upload</a></li></ul><h3>Namespaces</h3><ul><li><a href="client.html">client</a></li><li><a href="main.html">main</a></li><li><a href="query.html">query</a></li></ul><h3>Classes</h3><ul><li><a href="module-Logs-Logger.html">Logger</a></li></ul>
+</nav>
+
+<br class="clear">
+
 <footer>
-    <img class="logo" src="img/toast-ui.png" style="">
-    <div class="footer-text">Documentation written by Nick Julien</div>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jul 31 2019 13:51:22 GMT-0500 (Central Daylight Time)
 </footer>
-<script>prettyPrint();</script>
-<script src="scripts/jquery.min.js"></script>
-<script src="scripts/tui-doc.js"></script>
-<script src="scripts/linenumber.js"></script>
 
-    <script>
-        var id = '_sub'.replace(/"/g, '_');
-        var selectedApi = document.getElementById(id); // do not use jquery selector
-        var $selectedApi = $(selectedApi);
-
-        $selectedApi.removeClass('hidden');
-        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-        showLnbApi();
-    </script>
-
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

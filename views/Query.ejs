@@ -25,16 +25,16 @@
                     <form method="post" enctype="multipart/form-data" action="/submit_similar">
                     <!-- Display Results -->
                     <div id="results_container" class="row hidden">
-                        
+
                         <!-- Display Uploaded Image Section -->
                         <div class="results_original_image" id="results_original_image">
                             <div class="uploaded_text">
                                     <p id="upload_text" class="hidden text-center">Uploaded Image</p><br>
                             </div>
                             <div class="image_original"><div class="imgHolder" id="imageUploaded"></div></div>
-                            
+
                         </div>
-                        
+
                         <!-- Display Results for Comparison -->
                     <div class="results_comparison_images">
                         <div class="image_container" id="first_result">
@@ -47,7 +47,7 @@
                             </div>
                             <div class="image_comparison">
                                 <div class="imgHolder" id="imageHolder0"></div>
-                            </div>             
+                            </div>
                         </div>
 
                         <div class="image_container" id="second_result">
@@ -60,7 +60,7 @@
                             </div>
                             <div class="image_comparison">
                                 <div class="imgHolder" id="imageHolder1"></div>
-                            </div>             
+                            </div>
                         </div>
 
                         <div class="image_container" id="third_result">
@@ -73,128 +73,22 @@
                             </div>
                             <div class="image_comparison">
                                 <div class="imgHolder" id="imageHolder2"></div>
-                            </div>             
+                            </div>
                         </div>
 
-                         <!-- Associate Button -->      
-                        <input type="submit" id="similar_submit" class="hidden associate_button" value="Associate" />       
-                    </div>                  
-                    
+                         <!-- Associate Button -->
+                        <input type="submit" id="similar_submit" class="hidden associate_button" value="Associate" />
                     </div>
-                   
-                    
+
+                    </div>
+
+
                 </form>
                 </div>
             </div>
 
         <%include Footer.ejs %>
         </div>
-        <script>
-            //ROR
-            $(function() {
-                var // Define maximum number of files.
-                    max_file_number = 1,
-                    // Define your form id or class or just tag.
-                    $form = $('#form-submit'),
-                    // Define your upload field class or id or tag.
-                    $file_upload = $('#upload', $form),
-                    // Define your submit class or id or tag.
-                    $button = $('.submit', $form);
-
-                $form.submit((e)=>{
-                    e.preventDefault();
-                    var data = new FormData($form[0]);
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST','/submit-query',true);
-                    xhr.send(data);
-
-                    //Paul Brackett
-                    xhr.onload = ()=>{
-                        var PRISdata = JSON.parse(xhr.responseText);
-
-                        displayUploadedImage(PRISdata);
-
-                        //If the results exist, go ahead and add them to the page.
-                        if(PRISdata["1"].results[0].label !== undefined)
-                        {
-                            addResult(PRISdata["1"].results[0], 0);
-                        }
-                        if(PRISdata["1"].results[1].label !== undefined)
-                        {
-                            addResult(PRISdata["1"].results[1], 1);
-                        }
-                        if(PRISdata["1"].results[2].label !== undefined)
-                        {
-                            addResult(PRISdata["1"].results[2], 2);
-                        }
-
-                        showElements();
-                  }
-
-            });
-
-
-
-                //ROR
-                // Disable submit button on page ready.
-                $button.prop('disabled', 'disabled');
-
-                //ROR
-                $file_upload.on('change', function () {
-                    var number_of_images = $(this)[0].files.length;
-                    if (number_of_images > max_file_number) {
-                        alert(`You can upload maximum ${max_file_number} files.`);
-                        $(this).val('');
-                        $button.prop('disabled', 'disabled');
-                    } else {
-                        $button.prop('disabled', false);
-                    }
-                    $('.custom-file-label').html($(this)[0].files[0].name);
-                });
-            });
-
-            //Paul Brackett
-            function addResult(result, result_num){
-                //Function does a ton of DOM manip.
-                //Selects a couple elements that were id-hardcoded 0 to 2.
-                var outer_div = document.querySelector('#imageHolder'+result_num);
-                var image_element = document.createElement("img");
-                var p_similar = document.querySelector('#psimilar_'+result_num);
-                var check_box = document.querySelector('#similar_'+result_num);
-
-                image_element.classList.add('results_image');
-                image_element.src = 'public\\profile_pics\\' + result.label + ".jpg";
-
-                outer_div.appendChild(image_element);
-
-                check_box.setAttribute('value', result.label);
-                check_box.classList.remove('hidden');
-
-                p_similar.innerHTML = "Similarity: " + Math.round(result.percent) + "%";
-            };
-
-            //Paul Brackett
-            function showElements(){
-                var submit_button = document.querySelector('#similar_submit');
-                var results_container = document.querySelector('#results_container');
-                var upload_text = document.querySelector('#upload_text');
-
-                submit_button.classList.remove('hidden');
-                results_container.classList.remove('hidden');
-                upload_text.classList.remove('hidden');
-            };
-
-            //Paul Brackett
-            function displayUploadedImage(pris_data){
-                var image_original_div = document.querySelector('#imageUploaded');
-                var image_element = document.createElement("img");
-
-                image_element.src = 'public\\query_data\\' + pris_data["1"].image;
-                image_element.classList.add('results_image');
-
-                image_original_div.appendChild(image_element);
-            };
-
-        </script>
+        <script src="public/query.js"></script>
     </body>
 </html>

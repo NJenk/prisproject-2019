@@ -1,7 +1,12 @@
 /**
-* @namespace Progress
+* @file client.js
 * @desc Front-end code to manage the spawning, updating, and deleting of progress bars
 * @author Paul Brackett
+* @see client
+*/
+
+/**
+* @namespace client
 */
 
 window.setInterval(function() {
@@ -18,8 +23,8 @@ if(!document.cookie) {
 
 /** Parse the asynchronously fetched global progress object and spawn progress bars
  * @author Paul Brackett
- * @memberof Progress
  * @async
+ * @memberof client
  */
 function getProgress() {
     fetch('/getprogress').then(function(response) {
@@ -84,7 +89,7 @@ function getProgress() {
 
 /**
  * Generate a new progress bar div for a specific file
- * @memberof Progress
+ * @memberof client
  * @param {Object} upload - Progress data object for a specific video
  * @param {string} upload.temp_name - Current name of the video
  * @param {string} upload.original_name - User's original filename for the video or image
@@ -110,7 +115,7 @@ function createProgressBar(upload) {
 
 /**
  * Create an alert div and hook its close button to a function that asynchronously removes a file from the global progress object
- * @memberof Progress
+ * @memberof client
  * @param {string} user_id - Unique identifier for the current user
  * @param {string} temp_name - Current name of the file the button will remove from the progress object
  * @return {Object} DOM div element of a bootstrap alert box
@@ -141,7 +146,7 @@ function createAlert(user_id, temp_name) {
 
 /**
  * Set a class on a given progress bar based on its completion percentage
- * @memberof Progress
+ * @memberof client
  * @param {Object} progress_bar_element - DOM object of a bootstrap progress bar
  * @param {number} percent_done - Percent completion of the given progress bar
  * @param {string} user_id - Unique identifier for the current user
@@ -178,7 +183,7 @@ function setStyle(progress_bar_element, percent_done, user_id, upload, outer_div
 
 /**
  * Add a close button to a DOM element
- * @memberof Progress
+ * @memberof client
  * @param {object} progress_bar_element - DOM element to recieve a close button
  * @param {object} outer_div - DOM object for the parent div of the given object
  * @param {string} user_id - Unique identifier for the current user

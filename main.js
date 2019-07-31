@@ -1,10 +1,15 @@
 /**
-* @namespace Server
-* @desc All code related to server routing. This namespace includes primarily inline anonymous functions which exist as Express.js middleware. The authors attributed here wrote either middleware or the linking code that runs the server and route through said middleware.
+* @file main.js
+* @desc All code related to server routing. This file includes primarily inline anonymous functions which exist as Express.js middleware.
 * @author Rei Radford
 * @author Nicole Jenkins
-* @author Nicholas Julien
+* @author Nick Julien
 * @author Paul Brackett
+*	@see main
+*/
+
+/**
+* @namespace main
 */
 
 //Authors: Rei Radford and Nicole Jenkins
@@ -52,7 +57,7 @@ app.get('/Logs',
 	/**
 	* Express middleware to parse log files into data usable by the front-end. NOTE: This is an anonymous function.
 	* @function parseLogs
-	* @memberof Server
+	*	@memberof main
 	* @param {object} req - Express HTTP request object
 	* @param {object} res - Express HTTP response object
 	* @author Paul Brackett
@@ -114,7 +119,7 @@ app.post('/submit_similar',
 	/**
 	* Express middleware to send user selected profile linking information to the database. NOTE: This is an anonymous function.
 	* @function submitSimilar
-	* @memberof Server
+	*	@memberof main
 	* @param {object} req - Express HTTP request object
 	* @param {object} res - Express HTTP response object
 	* @author Paul Brackett
@@ -164,14 +169,11 @@ app.post('/removeupload', (req, res) => {
 //End: Paul Brackett
 
 //Scheduled server tasks go here
-/**
-* @namespace Scheduled
-* @desc Tasks that get run on a schedule based on date and/or time of day
-*/
 
 /**
-* Rename the global log file daily at midnight
-* @memberof Scheduled
+* Rename the global log file to yesterday's date. NOTE: This is an anonymous function and cannot be referenced
+*	@name renameLogs
+*	@memberof main
 * @author Nick Julien
 */
 var dailyLogRename = schedule.scheduleJob('0 0 0 * * *', ()=>{

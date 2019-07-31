@@ -1,4 +1,10 @@
 /**
+*	@file logManager.js
+*	@desc This file contains the logs module, which has code for logging file process information.
+*	@author Nick Julien
+*/
+
+/**
 * @module Logs
 * @desc Back-end code for handling logging.
 * @author Nick Julien
