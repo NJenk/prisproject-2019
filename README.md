@@ -15,7 +15,7 @@ Install the following Python packages with CMD:
 
 `npm install` Node dependencies into the project folder.
    
-From the PRIS folder (Google Drive), drag over the following folders from `src/lib` into the prisproject-2019 `resources/PRIS` folder:
+From the PRIS folder (Google Drive), drag over the following folders into the prisproject-2019 `resources/PRIS` folder:
 * 3rdparty
 * bin
 * database
